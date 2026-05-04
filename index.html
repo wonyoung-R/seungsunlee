@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>이승선 — Seungsun Lee · Curator │ Docent</title>
+<meta name="description" content="Where Art Connects to Me — A new philosophy on art & storytelling by Seungsun Lee. Curator, Docent, and Art Storyteller bridging museum and brand." />
+<meta property="og:title" content="이승선 — Seungsun Lee · Curator │ Docent" />
+<meta property="og:description" content="Where Art Connects to Me — From Museum to Brand. Curator · Docent · Art Storyteller." />
+<meta property="og:image" content="assets/img/profile.webp" />
+<link rel="icon" type="image/webp" href="assets/img/profile.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #EDEAE2; font-family: 'Inter', 'Noto Sans KR', sans-serif; color: #1A1814; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #D8D2C2; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  button { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { max-width: 100%; height: auto; display: block; }
+  @media (max-width: 768px) {
+    [data-grid] { grid-template-columns: 1fr !important; }
+    [data-grid] > * { grid-area: auto !important; aspect-ratio: auto !important; min-height: 360px; }
+    [data-stack-mobile] { grid-template-columns: 1fr !important; gap: 18px !important; }
+    [data-stack-mobile] > [data-stack-photo] { aspect-ratio: 4/3 !important; }
+    [data-grid-3] { grid-template-columns: 1fr 1fr !important; }
+    [data-mobile-hide] { display: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+// ============================================================================
+// DATA — sourced verbatim from https://litt.ly/sdngazer (Curator│Docent)
+// ============================================================================
+
+const PROFILE = {
+  nameKr: "이승선",
+  nameEn: "Seungsun Lee",
+  title: "Curator · Docent · Art Storyteller",
+  brand: "Where Art Connects to Me",
+  subtitle: "From Museum to Brand",
+  philosophy: "A new philosophy on art & storytelling by @sdngazer",
+  basedIn: "Seoul",
+  languages: "Korean · English",
+  focus: "Modern · Contemporary",
+};
+
+const CONTACT = {
+  email: "sdngazer@gmail.com",
+  instagram: "https://www.instagram.com/sdngazer/",
+  instagramHandle: "@sdngazer",
+  kakao: "https://open.kakao.com/me/sdngazer",
+  youtube: "https://www.youtube.com/@leeseungsun",
+  youtubeHandle: "@leeseungsun",
+  source: "https://litt.ly/sdngazer",
+};
+
+const CURATIONS = [
+  {
+    key: "sisley",
+    title: "Sisley Paris Curation",
+    subtitle: "The Trois Cinq Friendland",
+    body: "2025 · The Sisley Young Artist Award · Seoul",
+    img: "assets/img/sisley.webp",
+    label: "CURATION · 2025",
+    link: CONTACT.instagram,
+  },
+  {
+    key: "jungkwang",
+    title: "JungKwang Curation",
+    subtitle: "Jung Gwang : The Origin of Art",
+    body: "20th Anniversary Memorial Exhibition\nwith the Five Gwanghwa Artists",
+    img: "assets/img/jungkwang.webp",
+    label: "CURATION · MEMORIAL",
+    link: CONTACT.instagram,
+  },
+];
+
+const DOCENT_HIGHLIGHTS = [
+  { title: "SFMOMA",                 sub: "Art Tour Director & Docent",                                    img: "assets/img/docent-01-sfmoma.webp",     link: "https://www.instagram.com/p/DMzLwUYJC9-/" },
+  { title: "NYC MoMA",               sub: "feat. artist Minjeong An",                                       img: "assets/img/docent-02-moma.webp",       link: "https://www.instagram.com/p/DPaaRTtjHdu/" },
+  { title: "Salvador Dalí Etching",  sub: "The Argillet Collection",                                        img: "assets/img/docent-03-dali.webp",       link: "https://www.instagram.com/p/DT2xQYDk7v4/" },
+  { title: "National Museum of Korea", sub: "Docent",                                                       img: "assets/img/docent-04-natkorea.webp",   link: "https://www.instagram.com/p/DOX858Pk8zM/" },
+  { title: "Sotheby's",              sub: "Henry Moore · Docent",                                           img: "assets/img/docent-05-sothebys.webp",   link: "https://www.instagram.com/p/DOUou7Sk3CO/" },
+  { title: "BVLGARI 2025",           sub: "VIP Docent · CCO",                                               img: "assets/img/docent-06-bvulgari.webp",   link: "https://www.instagram.com/p/DHujcWyyFii/" },
+  { title: "Salon Hannam 2024",      sub: "VIP · Sotheby's, Lisson Gallery, Petzel",                        img: "assets/img/docent-07-salonhannam.webp",link: "https://www.instagram.com/p/C_5YyypSwVo/" },
+  { title: "Pablo Picasso",          sub: "25 Years of Edition Ceramics (LGE)",                             img: "assets/img/docent-08-picasso.webp",    link: "https://www.instagram.com/p/C_VHxIgSS9Z/" },
+  { title: "Dreams in Form",         sub: "Prints of Four Masters · Chagall · Miró · Dalí · Fontana",       img: "assets/img/docent-09-dreams.webp",     link: "https://www.instagram.com/p/DEPNmj5JldK/" },
+];
+
+const LECTURES = [
+  { brand: "LG",         title: "Where Art Connects to Me",        sub: "Corporate Lecture",         img: "assets/img/lecture-01-lg.webp",    link: "https://www.instagram.com/p/DLH9G_GpuvF/" },
+  { brand: "HANA BANK",  title: "VIP Lecture · NYC BIG3 MUSEUM",   sub: "Corporate Lecture",         img: "assets/img/lecture-02-hana.webp",  link: "https://www.instagram.com/p/DRjnjhnEwuj/" },
+  { brand: "LOTTE",      title: "Where Art Connects to Me",        sub: "Corporate Lecture",         img: "assets/img/lecture-03-lotte.webp", link: "https://www.instagram.com/p/DIvzTrjJ5ND/" },
+];
+
+// ============================================================================
+// PRIMITIVES
+// ============================================================================
+
+const NAV_ITEMS = [
+  { key: "home",     label: "Home" },
+  { key: "about",    label: "About" },
+  { key: "work",     label: "Work" },
+  { key: "projects", label: "Channel" },
+  { key: "contact",  label: "Contact" },
+];
+
+const MiniNav = ({ label, active, onGo, dense }) => {
+  const fs = dense ? 8 : 9;
+  return (
+    <div style={{
+      display: "flex", justifyContent: "space-between", alignItems: "baseline",
+      padding: dense ? "16px 20px" : "22px 28px",
+      fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+      flexShrink: 0,
+    }}>
+      <div style={{
+        fontSize: fs, letterSpacing: 2.2, color: "#1A1814",
+        textTransform: "uppercase", fontWeight: 500, whiteSpace: "nowrap",
+      }}>{label}</div>
+      <div style={{ display: "flex", gap: dense ? 14 : 22, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        {NAV_ITEMS.map(n => (
+          <button key={n.key}
+            onClick={(e) => { e.stopPropagation(); onGo(n.key); }}
+            style={{
+              background: "none", border: "none", cursor: "pointer", padding: 0,
+              fontFamily: "inherit",
+              fontSize: fs, letterSpacing: 1.8,
+              color: active === n.key ? "#1A1814" : "#9A9486",
+              fontWeight: active === n.key ? 500 : 400,
+              textTransform: "uppercase", whiteSpace: "nowrap",
+            }}>{n.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Photo: tone-based gradient placeholder OR real image when src provided.
+const Photo = ({ tone = 1, label, ratio = "4/3", style, src, alt = "", objectPosition = "center" }) => {
+  const bgs = [
+    "linear-gradient(135deg, #F0EBDF 0%, #DDD3BF 100%)",
+    "linear-gradient(160deg, #E8DFCC 0%, #C9BCA0 100%)",
+    "linear-gradient(135deg, #F5F1E8 0%, #E2DCCC 100%)",
+    "linear-gradient(160deg, #6B665C 0%, #3E3A33 100%)",
+  ];
+  return (
+    <div style={{
+      aspectRatio: ratio,
+      background: src ? "#EDE8DC" : (bgs[tone] || bgs[0]),
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}>
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition,
+            display: "block",
+          }}
+        />
+      ) : (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "repeating-linear-gradient(135deg, rgba(0,0,0,0.015) 0 1px, transparent 1px 14px)",
+        }} />
+      )}
+      {label && (
+        <div style={{
+          position: "absolute", left: 16, bottom: 14,
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          color: src ? "#FFFFFF" : (tone === 3 ? "#D8D2C2" : "#8A8275"),
+          letterSpacing: 1.5, textTransform: "uppercase",
+          textShadow: src ? "0 1px 2px rgba(0,0,0,0.4)" : "none",
+          padding: src ? "4px 8px" : 0,
+          background: src ? "rgba(0,0,0,0.18)" : "transparent",
+          backdropFilter: src ? "blur(2px)" : "none",
+        }}>{label}</div>
+      )}
+    </div>
+  );
+};
+
+// ============================================================================
+// SLIDES
+// ============================================================================
+
+// ----- 01 Home -----
+const SlideHome = ({ onGo, dense, focused }) => {
+  const [bullet, setBullet] = React.useState(1);
+  React.useEffect(() => {
+    if (!focused) return;
+    const id = setInterval(() => setBullet(b => (b % 3) + 1), 4200);
+    return () => clearInterval(id);
+  }, [focused]);
+  const titleSize = focused ? "clamp(36px, 4.6vw, 76px)" : "clamp(18px, 2.4vw, 44px)";
+  const eyebrowSize = focused ? "clamp(11px, 0.85vw, 13px)" : "clamp(8px, 0.7vw, 10px)";
+  const bodySize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(10px, 0.9vw, 13px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label={PROFILE.nameEn} active="home" onGo={onGo} dense={dense} />
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 0 }} data-stack-mobile>
+        <div style={{ position: "relative", overflow: "hidden" }} data-stack-photo>
+          <Photo tone={2} ratio="auto" style={{ position: "absolute", inset: 0, aspectRatio: "auto" }}
+                 src="assets/img/profile.webp"
+                 alt="Seungsun Lee, curator and docent — portrait"
+                 objectPosition="center 30%"
+                 label="PORTRAIT · @SDNGAZER" />
+        </div>
+        <div style={{
+          padding: focused ? "10vh 8vw 4vh 6vw" : "8% 8% 6% 7%",
+          display: "flex", flexDirection: "column", justifyContent: "center", position: "relative",
+        }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: eyebrowSize, letterSpacing: 2.5, color: "#9A9486",
+            textTransform: "uppercase", marginBottom: focused ? 22 : 8,
+            textWrap: "balance",
+          }}>
+            {PROFILE.subtitle} · Curator · Docent
+          </div>
+          <h1 style={{
+            fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+            fontWeight: 400, fontSize: titleSize,
+            lineHeight: 1.08, letterSpacing: -0.5,
+            color: "#1A1814", margin: 0, textWrap: "balance",
+            wordBreak: "keep-all",
+          }}>
+            {PROFILE.brand}.
+          </h1>
+          <p style={{
+            margin: focused ? "32px 0 0" : "16px 0 0",
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: bodySize, lineHeight: 1.7, color: "#5A5448",
+            maxWidth: "70%",
+          }}>
+            {PROFILE.philosophy}
+          </p>
+          {focused && (
+            <div style={{
+              marginTop: 36, display: "flex", gap: 14, flexWrap: "wrap",
+            }}>
+              <button onClick={(e) => { e.stopPropagation(); onGo("work"); }} style={{
+                background: "#1A1814", color: "#FAFAF7", border: "1px solid #1A1814",
+                padding: "12px 18px", cursor: "pointer",
+                fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: 1.8,
+                textTransform: "uppercase",
+              }}>View Work →</button>
+              <button onClick={(e) => { e.stopPropagation(); onGo("contact"); }} style={{
+                background: "none", color: "#1A1814", border: "1px solid #1A1814",
+                padding: "12px 18px", cursor: "pointer",
+                fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: 1.8,
+                textTransform: "uppercase",
+              }}>편지 쓰기</button>
+            </div>
+          )}
+          <div style={{
+            position: "absolute", right: focused ? "8vw" : "8%", top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex", flexDirection: "column", gap: focused ? 22 : 14,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: focused ? 12 : 9, color: "#9A9486", letterSpacing: 1,
+          }} data-mobile-hide>
+            {[1,2,3].map(n => (
+              <div key={n} style={{ display: "flex", alignItems: "center", gap: 10, opacity: bullet === n ? 1 : 0.45, transition: "opacity 600ms ease" }}>
+                <span style={{
+                  width: focused ? 5 : 3, height: focused ? 5 : 3, borderRadius: "50%",
+                  background: bullet === n ? "#1A1814" : "transparent",
+                  border: bullet === n ? "none" : "1px solid #9A9486",
+                  transition: "background 600ms ease",
+                }} />
+                <span>0{n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ----- 02 About -----
+const SlideAbout = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(28px, 2.6vw, 44px)" : "clamp(13px, 1.3vw, 22px)";
+  const bodySize = focused ? "clamp(13px, 0.92vw, 16px)" : "clamp(9px, 0.78vw, 12px)";
+  const labelSize = focused ? 10 : 7;
+  const factSize = focused ? "clamp(12px, 0.85vw, 14px)" : "clamp(8px, 0.7vw, 11px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#F5F2EB" }}>
+      <MiniNav label="About" active="about" onGo={onGo} dense={dense} />
+      <div style={{
+        flex: 1,
+        display: "grid",
+        gridTemplateColumns: "0.85fr 1.1fr 0.7fr",
+        gap: focused ? 56 : 18,
+        padding: focused ? "5vh 7vw 4vh" : "3% 5% 3.5%",
+        minHeight: 0,
+      }} data-stack-mobile>
+        {/* Column 1 — portrait + brand line */}
+        <div style={{ display: "flex", flexDirection: "column", gap: focused ? 18 : 6 }}>
+          <Photo tone={2} ratio="3/4" style={{ width: "100%" }}
+                 src="assets/img/profile.webp"
+                 alt="Seungsun Lee portrait"
+                 objectPosition="center 30%"
+                 label="@SDNGAZER" />
+          <div style={{
+            fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic",
+            fontSize: focused ? "clamp(14px, 1vw, 17px)" : "clamp(9px, 0.78vw, 12px)",
+            color: "#7A7466", lineHeight: 1.5,
+          }}>
+            “Where Art Connects to Me — <br/>From Museum to Brand.”
+          </div>
+        </div>
+
+        {/* Column 2 — name + intro (litt.ly facts only) */}
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
+          <div style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: labelSize, letterSpacing: 2.5, color: "#9A9486",
+            textTransform: "uppercase", marginBottom: focused ? 14 : 4,
+          }}>
+            {PROFILE.title}
+          </div>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+            fontWeight: 400, fontSize: titleSize,
+            lineHeight: 1.15, color: "#1A1814", margin: 0,
+            letterSpacing: -0.3,
+          }}>
+            {PROFILE.nameKr}<br/>
+            <span style={{ fontStyle: "italic", color: "#5A5448" }}>{PROFILE.nameEn}</span>
+          </h2>
+          <div style={{
+            width: focused ? 36 : 18, height: 1, background: "#1A1814",
+            margin: focused ? "22px 0 22px" : "8px 0 8px",
+          }} />
+          <p style={{
+            margin: 0,
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: bodySize, lineHeight: 1.85, color: "#3A3530",
+          }}>
+            <strong style={{ color: "#1A1814" }}>{PROFILE.brand}</strong> — 미술관과 브랜드 사이에서 작품과 사람을 연결하는 큐레이터·도슨트로 활동합니다. 전시 큐레이션, 도슨트, 그리고 기업 강연을 통해 예술의 이야기를 전합니다.
+          </p>
+          <p style={{
+            margin: focused ? "14px 0 0" : "6px 0 0",
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: bodySize, lineHeight: 1.85, color: "#3A3530",
+          }}>
+            From Museum to Brand. SFMOMA, NYC MoMA, Sotheby's, National Museum of Korea를 비롯한 글로벌 기관과 BVLGARI · LG · 하나은행 · 롯데 등 기업 파트너와 함께 예술 경험을 설계해 왔습니다.
+          </p>
+        </div>
+
+        {/* Column 3 — facts */}
+        <div style={{
+          display: "flex", flexDirection: "column",
+          justifyContent: "center",
+          gap: focused ? 16 : 4,
+          fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+        }}>
+          {[
+            ["Based in",     PROFILE.basedIn],
+            ["Focus",        PROFILE.focus],
+            ["Languages",    PROFILE.languages],
+            ["Channel",      "YouTube · " + CONTACT.youtubeHandle],
+            ["Inquiry",      CONTACT.instagramHandle + " · KakaoTalk"],
+          ].map(([k, v], i) => (
+            <div key={i} style={{
+              borderTop: "1px solid #D8D2C2",
+              paddingTop: focused ? 10 : 3,
+              display: "flex", flexDirection: "column",
+              gap: focused ? 4 : 1,
+            }}>
+              <div style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: labelSize, color: "#9A9486", letterSpacing: 1.5,
+                textTransform: "uppercase",
+              }}>{k}</div>
+              <div style={{ fontSize: factSize, color: "#1A1814" }}>{v}</div>
+            </div>
+          ))}
+          {focused && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onGo("contact"); }}
+              style={{
+                marginTop: 14,
+                background: "none", border: "1px solid #1A1814",
+                padding: "10px 14px", cursor: "pointer",
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 10, letterSpacing: 1.8, textTransform: "uppercase",
+                color: "#1A1814", textAlign: "left",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
+              <span>편지 쓰기</span><span>→</span>
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ----- 03 Work overview -----
+const SlideWork = ({ onGo, dense, focused }) => {
+  const items = [
+    { n: "01", t: "Curating",  body: "Sisley Paris · JungKwang. Exhibition curation that turns a space into a story.", tone: 0, label: "INSTALL", target: "curating" },
+    { n: "02", t: "Docent",    body: "SFMOMA · MoMA · Sotheby's · National Museum of Korea · BVLGARI VIP. Reading the work, together.", tone: 2, label: "WALK · BY", target: "docent" },
+    { n: "03", t: "Lecture",   body: "Corporate lectures for LG · HANA BANK VIP · LOTTE. Where art connects to people.", tone: 1, label: "DESK", target: "lecture" },
+  ];
+  const titleSize = focused ? "clamp(22px, 1.8vw, 32px)" : "clamp(11px, 1vw, 16px)";
+  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.7vw, 11px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label="Work" active="work" onGo={onGo} dense={dense} />
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: focused ? 40 : 16, padding: focused ? "4vh 6vw" : "3% 5%", minHeight: 0 }} data-stack-mobile>
+        {items.map(it => (
+          <div key={it.n}
+               onClick={(e) => { if (focused) { e.stopPropagation(); onGo(it.target); } }}
+               style={{ display: "flex", flexDirection: "column", cursor: focused ? "pointer" : "default" }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: focused ? 11 : 8, color: "#9A9486", letterSpacing: 1.5, marginBottom: focused ? 14 : 6 }}>{it.n}</div>
+            <h3 style={{
+              fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+              fontWeight: 400, fontSize: titleSize,
+              color: "#1A1814", margin: 0,
+            }}>{it.t}</h3>
+            <Photo tone={it.tone} ratio="4/3" style={{ marginTop: focused ? 24 : 10 }} label={it.label} />
+            <p style={{
+              margin: focused ? "20px 0 0" : "8px 0 0",
+              fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+              fontSize: bodySize, lineHeight: 1.65, color: "#5A5448",
+            }}>{it.body}</p>
+            {focused && (
+              <div style={{
+                marginTop: 22,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 10, color: "#1A1814", letterSpacing: 1.8,
+                textTransform: "uppercase",
+              }}>Open →</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ----- 04 Curating — 2 cards (Sisley + JungKwang) -----
+const SlideCurating = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
+  const cardTitleSize = focused ? "clamp(20px, 1.6vw, 28px)" : "clamp(10px, 0.9vw, 13px)";
+  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.72vw, 11px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label="Curating" active="work" onGo={onGo} dense={dense} />
+      <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
+        <h2 style={{
+          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+          fontWeight: 400, fontSize: titleSize,
+          color: "#1A1814", margin: 0,
+        }}>Curating</h2>
+      </div>
+      <div style={{
+        flex: 1,
+        display: "grid", gridTemplateColumns: "1fr 1fr",
+        gap: focused ? 56 : 14,
+        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
+        minHeight: 0,
+      }} data-stack-mobile>
+        {CURATIONS.map(c => (
+          <a key={c.key} href={c.link} target="_blank" rel="noopener noreferrer"
+             onClick={(e) => e.stopPropagation()}
+             style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
+            <Photo tone={1} ratio="16/9" src={c.img} alt={c.title} label={c.label} style={{ width: "100%" }} />
+            <div style={{ marginTop: focused ? 22 : 8 }}>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+                fontWeight: 400, fontSize: cardTitleSize,
+                color: "#1A1814", margin: 0, lineHeight: 1.2,
+              }}>{c.title}</h3>
+              {focused && (
+                <div style={{
+                  fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+                  fontSize: bodySize, color: "#5A5448",
+                  marginTop: 8, lineHeight: 1.65, whiteSpace: "pre-line",
+                }}>
+                  <div style={{ fontWeight: 500, color: "#1A1814", marginBottom: 4 }}>{c.subtitle}</div>
+                  {c.body}
+                </div>
+              )}
+              {focused && (
+                <div style={{
+                  marginTop: 14,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 10, color: "#9A9486", letterSpacing: 1.5, textTransform: "uppercase",
+                }}>View on Instagram →</div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ----- 05 Docent — 9 highlights grid -----
+const SlideDocent = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
+  const cardTitleSize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(8px, 0.7vw, 10px)";
+  const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
+  // grid: 3x3 in focused, 3x3 compact in card
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label="Docent" active="work" onGo={onGo} dense={dense} />
+      <div style={{ padding: focused ? "0 7vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }}>
+        <h2 style={{
+          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+          fontWeight: 400, fontSize: titleSize,
+          color: "#1A1814", margin: 0,
+        }}>Docent</h2>
+        {focused && (
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10, color: "#9A9486", letterSpacing: 1.5, textTransform: "uppercase",
+          }}>Career Highlights · {DOCENT_HIGHLIGHTS.length}</div>
+        )}
+      </div>
+      <div style={{
+        flex: 1, minHeight: 0, overflow: focused ? "auto" : "hidden",
+        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
+      }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: focused ? 24 : 8,
+        }} data-grid-3>
+          {DOCENT_HIGHLIGHTS.map((d, i) => (
+            <a key={i} href={d.link} target="_blank" rel="noopener noreferrer"
+               onClick={(e) => e.stopPropagation()}
+               style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
+              <Photo tone={i % 4} ratio="1/1" src={d.img} alt={d.title} style={{ width: "100%" }} />
+              <div style={{ marginTop: focused ? 12 : 4 }}>
+                <div style={{
+                  fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+                  fontWeight: 500, fontSize: cardTitleSize,
+                  color: "#1A1814", lineHeight: 1.2,
+                }}>{d.title}</div>
+                <div style={{
+                  fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+                  fontSize: subSize, color: "#7A7466",
+                  marginTop: focused ? 4 : 2, lineHeight: 1.4,
+                }}>{d.sub}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ----- 06 Lecture — 3 corporate lectures -----
+const SlideLecture = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
+  const cardTitleSize = focused ? "clamp(18px, 1.4vw, 24px)" : "clamp(10px, 0.85vw, 13px)";
+  const brandSize = focused ? 11 : 7;
+  const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label="Lecture" active="work" onGo={onGo} dense={dense} />
+      <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
+        <h2 style={{
+          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+          fontWeight: 400, fontSize: titleSize,
+          color: "#1A1814", margin: 0,
+        }}>Lecture</h2>
+        {focused && (
+          <div style={{
+            fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#7A7466",
+            marginTop: 10, letterSpacing: 0.4,
+          }}>Corporate Lecture Highlights — Where Art Connects to People</div>
+        )}
+      </div>
+      <div style={{
+        flex: 1, minHeight: 0,
+        display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+        gap: focused ? 32 : 12,
+        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
+      }} data-stack-mobile>
+        {LECTURES.map((l, i) => (
+          <a key={i} href={l.link} target="_blank" rel="noopener noreferrer"
+             onClick={(e) => e.stopPropagation()}
+             style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
+            <Photo tone={(i+1) % 3} ratio="4/3" src={l.img} alt={l.brand + " — " + l.title} style={{ width: "100%" }} />
+            <div style={{ marginTop: focused ? 16 : 6 }}>
+              <div style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: brandSize, color: "#9A9486", letterSpacing: 2,
+                textTransform: "uppercase",
+              }}>W. {l.brand}</div>
+              <div style={{
+                fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+                fontWeight: 400, fontSize: cardTitleSize,
+                color: "#1A1814", marginTop: focused ? 8 : 2, lineHeight: 1.25,
+              }}>{l.title}</div>
+              {focused && (
+                <div style={{
+                  fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+                  fontSize: subSize, color: "#7A7466",
+                  marginTop: 6, lineHeight: 1.5,
+                }}>{l.sub}</div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ----- 07 Channel (YouTube) — replaces generic Projects panel -----
+const SlideChannel = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
+  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(9px, 0.78vw, 12px)";
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
+      <MiniNav label="Channel" active="projects" onGo={onGo} dense={dense} />
+      <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
+        <h2 style={{
+          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+          fontWeight: 400, fontSize: titleSize,
+          color: "#1A1814", margin: 0,
+        }}>YouTube</h2>
+      </div>
+      <div style={{
+        flex: 1, display: "grid", gridTemplateColumns: "1.2fr 1fr",
+        gap: focused ? 56 : 14,
+        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
+        minHeight: 0,
+      }} data-stack-mobile>
+        <Photo tone={1} ratio="4/3" src="assets/img/youtube.webp" alt="YouTube channel — SeungsunLee"
+               objectPosition="center"
+               label="@LEESEUNGSUN"
+               style={{ width: "100%", alignSelf: "center" }} />
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: focused ? 11 : 8, color: "#9A9486",
+            letterSpacing: 2, textTransform: "uppercase", marginBottom: focused ? 12 : 4,
+          }}>YouTube Channel</div>
+          <div style={{
+            fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+            fontWeight: 400, fontSize: focused ? "clamp(22px, 1.8vw, 32px)" : "clamp(11px, 0.95vw, 14px)",
+            color: "#1A1814", margin: 0, lineHeight: 1.2,
+          }}>SeungsunLee</div>
+          <p style={{
+            margin: focused ? "16px 0 0" : "4px 0 0",
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: bodySize, lineHeight: 1.7, color: "#5A5448", maxWidth: "30ch",
+          }}>
+            예술의 이야기를 더 가까이 — 영상으로 만나는 큐레이션과 도슨트.
+          </p>
+          {focused && (
+            <a href={CONTACT.youtube} target="_blank" rel="noopener noreferrer"
+               onClick={(e) => e.stopPropagation()}
+               style={{
+                 marginTop: 28,
+                 background: "#1A1814", color: "#FAFAF7", border: "1px solid #1A1814",
+                 padding: "12px 18px", display: "inline-block", width: "fit-content",
+                 fontFamily: "'Inter', sans-serif",
+                 fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase",
+                 textDecoration: "none",
+               }}>Subscribe →</a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ----- 08 Contact -----
+const SlideContact = ({ onGo, dense, focused }) => {
+  const titleSize = focused ? "clamp(28px, 2.6vw, 42px)" : "clamp(11px, 1.1vw, 18px)";
+  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(9px, 0.78vw, 12px)";
+  const labelSize = focused ? 10 : 7;
+  return (
+    <div style={{ height: "100%", display: "flex", background: "#FAFAF7" }} data-stack-mobile>
+      <div style={{ flex: 1, position: "relative", overflow: "hidden", background: "#EDE8DC" }} data-stack-photo>
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(120deg, #F2EEE2 0%, #D9D2BF 100%)",
+        }} />
+        <div style={{
+          position: "absolute", left: "42%", bottom: "12%",
+          width: focused ? 80 : 36, height: focused ? 110 : 50,
+          background: "linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(180,170,150,0.3) 100%)",
+          border: "1px solid rgba(0,0,0,0.08)",
+          borderRadius: "8% 8% 4% 4% / 12% 12% 6% 6%",
+        }} />
+        <div style={{
+          position: "absolute", left: "48%", bottom: focused ? "32%" : "26%",
+          width: 1, height: focused ? "32%" : "26%",
+          background: "linear-gradient(180deg, transparent, #6B6451)",
+          transform: "rotate(-5deg)",
+          transformOrigin: "bottom",
+        }} />
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <MiniNav label="Contact" active="contact" onGo={onGo} dense={dense} />
+        <div style={{ flex: 1, padding: focused ? "8vh 7vw" : "5% 6%", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: focused ? 36 : 12 }}>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+            fontWeight: 400, fontSize: titleSize,
+            lineHeight: 1.25, color: "#1A1814", margin: 0, textWrap: "balance",
+          }}>For inquiries and collaborations,<br/>please get in touch.</h2>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: focused ? "1fr 1fr" : "1fr",
+            gap: focused ? 18 : 6,
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+          }}>
+            {[
+              ["Email",      CONTACT.email,           "mailto:" + CONTACT.email],
+              ["Instagram",  CONTACT.instagramHandle, CONTACT.instagram],
+              ["KakaoTalk",  "Open Chat",             CONTACT.kakao],
+              ["YouTube",    CONTACT.youtubeHandle,   CONTACT.youtube],
+            ].map(([k, v, href], i) => (
+              <a key={i} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel="noopener noreferrer"
+                 onClick={(e) => e.stopPropagation()}
+                 style={{
+                   display: "flex", flexDirection: "column", gap: focused ? 4 : 1,
+                   borderTop: "1px solid #D8D2C2", paddingTop: focused ? 10 : 3,
+                   textDecoration: "none", color: "inherit",
+                 }}>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: labelSize, color: "#9A9486", letterSpacing: 1.5,
+                  textTransform: "uppercase",
+                }}>{k}</span>
+                <span style={{ fontSize: bodySize, color: "#1A1814" }}>{v} →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+        <div style={{
+          padding: focused ? "20px 7vw" : "8px 6%",
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: focused ? 10 : 7, color: "#B0A998", letterSpacing: 1.5,
+        }}>© SEUNGSUN LEE · ALL RIGHTS RESERVED</div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// REGISTRY · GRID · APP
+// ============================================================================
+
+const SLIDE_REGISTRY = {
+  home:     SlideHome,
+  about:    SlideAbout,
+  work:     SlideWork,
+  curating: SlideCurating,
+  docent:   SlideDocent,
+  lecture:  SlideLecture,
+  projects: SlideChannel,
+  contact:  SlideContact,
+};
+
+const GRID_LAYOUT = [
+  { key: "home",     area: "1 / 1 / 2 / 3", aspect: "16/9" },
+  { key: "about",    area: "2 / 1 / 3 / 2", aspect: "16/10" },
+  { key: "work",     area: "2 / 2 / 3 / 3", aspect: "16/10" },
+  { key: "curating", area: "3 / 1 / 4 / 2", aspect: "16/9" },
+  { key: "docent",   area: "3 / 2 / 4 / 3", aspect: "16/9" },
+  { key: "lecture",  area: "4 / 1 / 5 / 2", aspect: "16/9" },
+  { key: "projects", area: "4 / 2 / 5 / 3", aspect: "16/9" },
+  { key: "contact",  area: "5 / 1 / 6 / 3", aspect: "21/9" },
+];
+
+const NAV_TO_SLIDE = {
+  home: "home", about: "about", work: "work",
+  projects: "projects", contact: "contact",
+  curating: "curating", docent: "docent", lecture: "lecture",
+};
+
+const App = () => {
+  const [focused, setFocused] = React.useState(null);
+  const cardRefs = React.useRef({});
+  const [transition, setTransition] = React.useState(null);
+  const [landed, setLanded] = React.useState(false);
+
+  const openSlide = (key) => {
+    if (transition) return;
+    if (focused === key) return;
+    const el = cardRefs.current[key];
+    const fromRect = el ? el.getBoundingClientRect() : null;
+    setTransition({ key, fromRect, phase: "opening" });
+    setFocused(key);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setTransition(t => t ? { ...t, phase: "open" } : null));
+    });
+    setTimeout(() => setTransition(null), 700);
+  };
+
+  const closeSlide = () => {
+    if (!focused) return;
+    const key = focused;
+    const el = cardRefs.current[key];
+    const toRect = el ? el.getBoundingClientRect() : null;
+    setTransition({ key, fromRect: toRect, phase: "closing" });
+    setTimeout(() => {
+      setFocused(null);
+      setTransition(null);
+    }, 600);
+  };
+
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") closeSlide();
+      if (focused && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+        const order = GRID_LAYOUT.map(g => g.key);
+        const i = order.indexOf(focused);
+        const next = e.key === "ArrowRight" ? order[(i + 1) % order.length] : order[(i - 1 + order.length) % order.length];
+        closeSlide();
+        setTimeout(() => openSlide(next), 620);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [focused]);
+
+  const handleNav = (navKey) => {
+    const slideKey = NAV_TO_SLIDE[navKey] || navKey;
+    if (focused) {
+      closeSlide();
+      setTimeout(() => openSlide(slideKey), 620);
+    } else {
+      openSlide(slideKey);
+    }
+  };
+
+  const handleNavLanding = (navKey) => {
+    setLanded(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const slideKey = NAV_TO_SLIDE[navKey] || navKey;
+        if (slideKey === "home") return;
+        openSlide(slideKey);
+      });
+    });
+  };
+
+  if (!landed) {
+    return (
+      <div style={{
+        height: "100vh", width: "100vw", overflow: "hidden",
+        background: "#EDEAE2", padding: "clamp(16px, 2.5vw, 36px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div
+          onClick={() => setLanded(true)}
+          style={{
+            width: "100%", height: "100%",
+            maxWidth: 1480,
+            background: "#FFFFFF",
+            cursor: "pointer", overflow: "hidden",
+            boxShadow: "0 1px 0 rgba(0,0,0,0.04)",
+            animation: "landingFade 1200ms cubic-bezier(0.22,0.61,0.36,1)",
+          }}
+        >
+          <SLIDE_REGISTRY.home onGo={handleNavLanding} dense={false} focused={true} />
+        </div>
+        <style>{`
+          @keyframes landingFade {
+            from { opacity: 0; transform: scale(0.985); }
+            to { opacity: 1; transform: scale(1); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#EDEAE2", padding: "clamp(16px, 2.5vw, 36px)" }}>
+      <Grid cardRefs={cardRefs} onOpen={openSlide} onNav={handleNav} focusedKey={focused} />
+      <FocusOverlay focused={focused} transition={transition} onClose={closeSlide} onNav={handleNav} />
+    </div>
+  );
+};
+
+const Grid = ({ cardRefs, onOpen, onNav, focusedKey }) => {
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "clamp(8px, 1vw, 14px)",
+      maxWidth: 1480, margin: "0 auto",
+    }} data-grid>
+      {GRID_LAYOUT.map(({ key, area, aspect }) => {
+        const Slide = SLIDE_REGISTRY[key];
+        const isHidden = focusedKey === key;
+        return (
+          <div
+            key={key}
+            ref={(el) => { cardRefs.current[key] = el; }}
+            onClick={() => onOpen(key)}
+            style={{
+              gridArea: area,
+              aspectRatio: aspect,
+              background: "#FFFFFF",
+              cursor: "pointer", overflow: "hidden",
+              boxShadow: "0 1px 0 rgba(0,0,0,0.04)",
+              opacity: isHidden ? 0 : 1,
+              transition: "opacity 280ms ease 280ms, transform 600ms cubic-bezier(0.22,0.61,0.36,1)",
+              transform: isHidden ? "scale(0.98)" : "scale(1)",
+              position: "relative",
+            }}
+            onMouseEnter={(e) => { if (!isHidden) e.currentTarget.style.transform = "scale(1.005)"; }}
+            onMouseLeave={(e) => { if (!isHidden) e.currentTarget.style.transform = "scale(1)"; }}
+          >
+            <Slide onGo={(navKey) => { onNav(navKey); }} dense focused={false} />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const FocusOverlay = ({ focused, transition, onClose, onNav }) => {
+  if (!focused && !transition) return null;
+  const key = focused || transition?.key;
+  const Slide = SLIDE_REGISTRY[key];
+  const phase = transition?.phase;
+  const fromRect = transition?.fromRect;
+
+  const overlayStyle = (() => {
+    const target = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
+    if (phase === "opening" && fromRect) {
+      const sx = fromRect.width / target.w;
+      const sy = fromRect.height / target.h;
+      const tx = fromRect.left;
+      const ty = fromRect.top;
+      return {
+        transform: `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`,
+        transformOrigin: "top left",
+        transition: "none",
+      };
+    }
+    if (phase === "closing" && fromRect) {
+      const sx = fromRect.width / target.w;
+      const sy = fromRect.height / target.h;
+      const tx = fromRect.left;
+      const ty = fromRect.top;
+      return {
+        transform: `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`,
+        transformOrigin: "top left",
+        transition: "transform 600ms cubic-bezier(0.22,0.61,0.36,1), opacity 400ms ease 250ms",
+        opacity: 0,
+      };
+    }
+    return {
+      transform: "translate(0, 0) scale(1, 1)",
+      transformOrigin: "top left",
+      transition: "transform 700ms cubic-bezier(0.22,0.61,0.36,1)",
+    };
+  })();
+
+  return (
+    <>
+      <div onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, background: "#1A1814",
+          opacity: phase === "open" ? 0.4 : 0,
+          transition: "opacity 600ms ease",
+          zIndex: 90,
+        }} />
+      <div style={{ position: "fixed", inset: 0, zIndex: 100, pointerEvents: "auto", ...overlayStyle }}>
+        <div style={{
+          width: "100vw", height: "100vh",
+          background: "#FFFFFF", overflow: "hidden", position: "relative",
+        }}>
+          <Slide onGo={(navKey) => onNav(navKey)} dense={false} focused={true} />
+          <button onClick={onClose}
+            style={{
+              position: "absolute", top: 22, right: 24,
+              background: "rgba(255,255,255,0.85)", border: "1px solid #1A1814",
+              width: 36, height: 36, borderRadius: "50%",
+              cursor: "pointer", padding: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "'Inter', sans-serif", fontSize: 14, color: "#1A1814",
+              opacity: phase === "open" ? 1 : 0,
+              transition: "opacity 400ms ease 300ms",
+              zIndex: 10,
+            }} aria-label="Close">×</button>
+          <div style={{
+            position: "absolute", left: 24, bottom: 18,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10, color: "#9A9486", letterSpacing: 1.5,
+            opacity: phase === "open" ? 1 : 0,
+            transition: "opacity 400ms ease 300ms",
+            background: "rgba(255,255,255,0.85)", padding: "4px 10px",
+          }}>
+            {String(GRID_LAYOUT.findIndex(g => g.key === key) + 1).padStart(2, "0")} / {String(GRID_LAYOUT.length).padStart(2, "0")} · ESC
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>

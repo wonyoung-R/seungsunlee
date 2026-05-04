@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>이승선 — Seungseon Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&family=Noto+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #FFFFFF; font-family: 'Inter', 'Noto Sans KR', sans-serif; color: #1A1814; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #E5DFD2; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  button { font-family: inherit; }
+  img, svg { max-width: 100%; height: auto; }
+
+  /* ========== Mobile responsive overrides (≤ 768px) ========== */
+  @media (max-width: 768px) {
+    /* Headers, footers, sections — tighter padding */
+    [data-mobile-pad] { padding: 56px 22px !important; }
+    [data-mobile-pad-tight] { padding: 40px 22px !important; }
+    [data-mobile-footer] {
+      padding: 28px 22px !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 16px !important;
+    }
+    [data-mobile-footer] > div:nth-child(2) {
+      flex-wrap: wrap !important;
+      gap: 6px 16px !important;
+    }
+    [data-mobile-nav-wrap] {
+      padding: 16px 22px !important;
+    }
+
+    /* Collapse all 2-col / multi-col grids into single column */
+    [data-mobile-stack] {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+    [data-mobile-stack-tight] {
+      grid-template-columns: 1fr !important;
+      gap: 20px !important;
+    }
+    [data-mobile-row-stack] {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+      padding: 16px 0 !important;
+    }
+    [data-mobile-row-stack] > *:last-child {
+      text-align: left !important;
+    }
+
+    /* Headlines shrink */
+    h1[data-mobile-h1] { font-size: 40px !important; line-height: 1.12 !important; }
+    h1[data-mobile-h1-lg] { font-size: 44px !important; line-height: 1.08 !important; }
+
+    /* CTA buttons wrap */
+    [data-mobile-cta] {
+      flex-wrap: wrap !important;
+      gap: 12px !important;
+    }
+    [data-mobile-cta] > button {
+      flex: 1 1 calc(50% - 12px) !important;
+      min-width: 140px !important;
+    }
+
+    /* About / Contact sidebar — drop the left border on mobile */
+    [data-mobile-noborder] {
+      border-left: none !important;
+      padding-left: 0 !important;
+      padding-top: 24px !important;
+      border-top: 1px solid #EFEAE0 !important;
+    }
+
+    /* Section label wraps */
+    [data-mobile-section-label] {
+      flex-wrap: wrap !important;
+      gap: 8px 14px !important;
+    }
+  }
+  @media (max-width: 480px) {
+    h1[data-mobile-h1] { font-size: 34px !important; }
+    h1[data-mobile-h1-lg] { font-size: 38px !important; }
+    [data-mobile-cta] > button { flex: 1 1 100% !important; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="motion.jsx"></script>
+<script type="text/babel" src="site-shell.jsx"></script>
+<script type="text/babel" src="site-pages.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "density": "compact"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [active, setActive] = React.useState("home");
+
+  React.useEffect(() => {
+    // scroll to top on page change
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [active]);
+
+  const Page = window.LeePages[active] || window.LeePages.home;
+
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }} data-screen-label={active}>
+      <LeeNav active={active} setActive={setActive} />
+      <main style={{ flex: 1 }}>
+        <PageFade keyId={active}>
+          <Page setActive={setActive} density={tweaks.density} />
+        </PageFade>
+      </main>
+      <LeeFooter />
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Layout density">
+          <TweakRadio
+            label="Density"
+            value={tweaks.density}
+            onChange={(v) => setTweak('density', v)}
+            options={[
+              { value: 'compact', label: 'Compact' },
+              { value: 'spacious', label: 'Spacious' },
+            ]}
+          />
+          <div style={{ fontSize: 11, color: '#777', marginTop: 8, lineHeight: 1.5 }}>
+            전체 페이지의 여백·내부 패딩이 함께 조정됩니다.
+          </div>
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

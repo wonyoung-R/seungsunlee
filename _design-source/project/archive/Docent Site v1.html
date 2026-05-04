@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>김승선 도슨트의 미술이야기 — Site Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&family=Noto+Sans+KR:wght@400;500&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #EDE7DA; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #D9D2C2; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="site-frame.jsx"></script>
+<script type="text/babel" src="variant-a.jsx"></script>
+<script type="text/babel" src="variant-b.jsx"></script>
+<script type="text/babel" src="variant-c.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "density": "spacious"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  // expose density to variant components (they read window.__variantDensity)
+  window.__variantDensity = tweaks.density;
+
+  // re-render variants when density changes by passing it down via key
+  const key = tweaks.density;
+
+  return (
+    <>
+      <DesignCanvas title="김승선 도슨트의 미술이야기 — Site Concepts" subtitle="3 directions · all pages clickable inside each frame">
+        <DCSection id="variants" title="Concepts">
+          <DCArtboard id="A" label="A · Museum Catalog (centered, serif)" width={1180} height={760}>
+            <SiteFrame key={"A-" + key} label="Variant A" pages={window.PAGES_A} />
+          </DCArtboard>
+          <DCArtboard id="B" label="B · Editorial Grid (asymmetric)" width={1180} height={760}>
+            <SiteFrame key={"B-" + key} label="Variant B" pages={window.PAGES_B} />
+          </DCArtboard>
+          <DCArtboard id="C" label="C · Left-Rail Index (sidebar)" width={1180} height={760}>
+            <SiteFrame key={"C-" + key} label="Variant C" pages={window.PAGES_C} />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Layout density">
+          <TweakRadio
+            label="Density"
+            value={tweaks.density}
+            onChange={(v) => setTweak('density', v)}
+            options={[
+              { value: 'compact', label: 'Compact' },
+              { value: 'spacious', label: 'Spacious' },
+            ]}
+          />
+          <div style={{ fontSize: 11, color: '#777', marginTop: 8, lineHeight: 1.5 }}>
+            모든 시안의 여백·폰트 크기·내부 패딩이 함께 조정됩니다.
+          </div>
+        </TweakSection>
+        <TweakSection title="Navigation">
+          <div style={{ fontSize: 11, color: '#555', lineHeight: 1.6 }}>
+            각 프레임 상단의 네비게이션을 클릭해 5개 페이지(About / Exhibition / Docent / Lecture / Contact)를 모두 둘러볼 수 있습니다.
+          </div>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
