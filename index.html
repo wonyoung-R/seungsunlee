@@ -21,13 +21,19 @@
   button { font-family: inherit; }
   a { color: inherit; text-decoration: none; }
   img, svg { max-width: 100%; height: auto; display: block; }
+  [data-mobile-only] { display: none !important; }
   @media (max-width: 768px) {
     [data-grid] { grid-template-columns: 1fr !important; }
-    [data-grid] > * { grid-area: auto !important; aspect-ratio: auto !important; min-height: 360px; }
-    [data-stack-mobile] { grid-template-columns: 1fr !important; gap: 18px !important; }
-    [data-stack-mobile] > [data-stack-photo] { aspect-ratio: 4/3 !important; }
+    [data-grid] > * { grid-area: auto !important; aspect-ratio: auto !important; min-height: 300px; }
+    [data-stack-mobile] { grid-template-columns: 1fr !important; gap: 16px !important; }
+    [data-stack-mobile] > [data-stack-photo] { aspect-ratio: 4/3 !important; max-height: 240px; }
     [data-grid-3] { grid-template-columns: 1fr 1fr !important; }
     [data-mobile-hide] { display: none !important; }
+    [data-mobile-only] { display: flex !important; }
+    /* focused 풀스크린 오버레이 내부 */
+    [data-focus-overlay] { padding: 0 !important; }
+    [data-mobile-pad] { padding-left: 20px !important; padding-right: 20px !important; }
+    [data-mobile-1col] { grid-template-columns: 1fr !important; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -112,41 +118,109 @@ const LECTURES = [
 // ============================================================================
 
 const NAV_ITEMS = [
-  { key: "home",     label: "Home" },
-  { key: "about",    label: "About" },
-  { key: "work",     label: "Work" },
-  { key: "projects", label: "Channel" },
-  { key: "contact",  label: "Contact" },
+  { key: "home",      label: "Home" },
+  { key: "portfolio", label: "Portfolio" },
+  { key: "projects",  label: "Projects" },
+  { key: "docent",    label: "Docent Program" },
+  { key: "lecture",   label: "Lectures" },
+  { key: "about",     label: "About" },
+  { key: "contact",   label: "Contact" },
 ];
 
 const MiniNav = ({ label, active, onGo, dense }) => {
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const fs = dense ? 8 : 9;
   return (
-    <div style={{
-      display: "flex", justifyContent: "space-between", alignItems: "baseline",
-      padding: dense ? "16px 20px" : "22px 28px",
-      fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
-      flexShrink: 0,
-    }}>
+    <>
       <div style={{
-        fontSize: fs, letterSpacing: 2.2, color: "#1A1814",
-        textTransform: "uppercase", fontWeight: 500, whiteSpace: "nowrap",
-      }}>{label}</div>
-      <div style={{ display: "flex", gap: dense ? 14 : 22, flexWrap: "wrap", justifyContent: "flex-end" }}>
-        {NAV_ITEMS.map(n => (
-          <button key={n.key}
-            onClick={(e) => { e.stopPropagation(); onGo(n.key); }}
-            style={{
-              background: "none", border: "none", cursor: "pointer", padding: 0,
-              fontFamily: "inherit",
-              fontSize: fs, letterSpacing: 1.8,
-              color: active === n.key ? "#1A1814" : "#9A9486",
-              fontWeight: active === n.key ? 500 : 400,
-              textTransform: "uppercase", whiteSpace: "nowrap",
-            }}>{n.label}</button>
-        ))}
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: dense ? "14px 20px" : "20px 28px",
+        fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+        flexShrink: 0,
+      }}>
+        <div style={{
+          fontSize: fs, letterSpacing: 2.2, color: "#1A1814",
+          textTransform: "uppercase", fontWeight: 500, whiteSpace: "nowrap",
+        }}>{label}</div>
+
+        {/* 데스크탑 nav */}
+        <div data-mobile-hide style={{ display: "flex", gap: dense ? 14 : 22, flexWrap: "nowrap", justifyContent: "flex-end" }}>
+          {NAV_ITEMS.map(n => (
+            <button key={n.key}
+              onClick={(e) => { e.stopPropagation(); onGo(n.key); }}
+              style={{
+                background: "none", border: "none", cursor: "pointer", padding: 0,
+                fontFamily: "inherit", fontSize: fs, letterSpacing: 1.8,
+                color: active === n.key ? "#1A1814" : "#9A9486",
+                fontWeight: active === n.key ? 500 : 400,
+                textTransform: "uppercase", whiteSpace: "nowrap",
+              }}>{n.label}</button>
+          ))}
+        </div>
+
+        {/* 모바일 햄버거 버튼 — focused(fullscreen)일 때만 표시 */}
+        {!dense && <button data-mobile-only
+          onClick={(e) => { e.stopPropagation(); setMenuOpen(true); }}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            padding: "10px 4px", display: "none",
+            flexDirection: "column", gap: 5, alignItems: "flex-end",
+          }}>
+          <span style={{ display: "block", width: 24, height: 1.5, background: "#1A1814", borderRadius: 1 }} />
+          <span style={{ display: "block", width: 17, height: 1.5, background: "#1A1814", borderRadius: 1 }} />
+          <span style={{ display: "block", width: 24, height: 1.5, background: "#1A1814", borderRadius: 1 }} />
+        </button>}
       </div>
-    </div>
+
+      {/* 모바일 풀스크린 메뉴 오버레이 */}
+      {menuOpen && (
+        <div onClick={(e) => e.stopPropagation()}
+          style={{
+            position: "fixed", inset: 0, background: "#FAFAF7", zIndex: 9999,
+            display: "flex", flexDirection: "column",
+            padding: "20px 28px 40px",
+          }}>
+          {/* 헤더 */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 52 }}>
+            <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 9, letterSpacing: 2.2, textTransform: "uppercase", fontWeight: 500, color: "#1A1814" }}>Seungsun Lee</div>
+            <button onClick={() => setMenuOpen(false)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "8px", color: "#1A1814", lineHeight: 1 }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <line x1="2" y1="2" x2="18" y2="18" stroke="#1A1814" strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="18" y1="2" x2="2" y2="18" stroke="#1A1814" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* 메뉴 아이템 */}
+          <nav style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+            {NAV_ITEMS.map((n, i) => (
+              <button key={n.key}
+                onClick={() => { onGo(n.key); setMenuOpen(false); }}
+                style={{
+                  background: "none", border: "none", borderBottom: "1px solid #E8E4DC",
+                  cursor: "pointer", padding: "18px 0",
+                  fontFamily: "'Cormorant Garamond','Noto Serif KR',serif",
+                  fontSize: "clamp(26px, 7vw, 38px)", fontWeight: 400,
+                  color: active === n.key ? "#1A1814" : "#9A9486",
+                  textAlign: "left", letterSpacing: 0.3,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                <span>{n.label}</span>
+                {active === n.key && <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#9A9486", letterSpacing: 1.5 }}>NOW</span>}
+              </button>
+            ))}
+          </nav>
+
+          {/* 하단 연락처 */}
+          <div style={{ marginTop: 32, fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#9A9486", letterSpacing: 1.5, display: "flex", gap: 20 }}>
+            <a href={CONTACT.instagram} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: "inherit", textDecoration: "none" }}>IG</a>
+            <a href={CONTACT.kakao} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: "inherit", textDecoration: "none" }}>KAKAO</a>
+            <a href={"mailto:" + CONTACT.email} onClick={(e) => e.stopPropagation()} style={{ color: "inherit", textDecoration: "none" }}>EMAIL</a>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -206,12 +280,6 @@ const Photo = ({ tone = 1, label, ratio = "4/3", style, src, alt = "", objectPos
 
 // ----- 01 Home -----
 const SlideHome = ({ onGo, dense, focused }) => {
-  const [bullet, setBullet] = React.useState(1);
-  React.useEffect(() => {
-    if (!focused) return;
-    const id = setInterval(() => setBullet(b => (b % 3) + 1), 4200);
-    return () => clearInterval(id);
-  }, [focused]);
   const titleSize = focused ? "clamp(36px, 4.6vw, 76px)" : "clamp(18px, 2.4vw, 44px)";
   const eyebrowSize = focused ? "clamp(11px, 0.85vw, 13px)" : "clamp(8px, 0.7vw, 10px)";
   const bodySize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(10px, 0.9vw, 13px)";
@@ -256,42 +324,15 @@ const SlideHome = ({ onGo, dense, focused }) => {
             {PROFILE.philosophy}
           </p>
           {focused && (
-            <div style={{
-              marginTop: 36, display: "flex", gap: 14, flexWrap: "wrap",
-            }}>
-              <button onClick={(e) => { e.stopPropagation(); onGo("work"); }} style={{
+            <div style={{ marginTop: 36 }}>
+              <button onClick={(e) => { e.stopPropagation(); onGo("portfolio"); }} style={{
                 background: "#1A1814", color: "#FAFAF7", border: "1px solid #1A1814",
-                padding: "12px 18px", cursor: "pointer",
+                padding: "12px 22px", cursor: "pointer",
                 fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: 1.8,
                 textTransform: "uppercase",
-              }}>View Work →</button>
-              <button onClick={(e) => { e.stopPropagation(); onGo("contact"); }} style={{
-                background: "none", color: "#1A1814", border: "1px solid #1A1814",
-                padding: "12px 18px", cursor: "pointer",
-                fontFamily: "'Inter', sans-serif", fontSize: 11, letterSpacing: 1.8,
-                textTransform: "uppercase",
-              }}>편지 쓰기</button>
+              }}>View Portfolio →</button>
             </div>
           )}
-          <div style={{
-            position: "absolute", right: focused ? "8vw" : "8%", top: "50%",
-            transform: "translateY(-50%)",
-            display: "flex", flexDirection: "column", gap: focused ? 22 : 14,
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: focused ? 12 : 9, color: "#9A9486", letterSpacing: 1,
-          }} data-mobile-hide>
-            {[1,2,3].map(n => (
-              <div key={n} style={{ display: "flex", alignItems: "center", gap: 10, opacity: bullet === n ? 1 : 0.45, transition: "opacity 600ms ease" }}>
-                <span style={{
-                  width: focused ? 5 : 3, height: focused ? 5 : 3, borderRadius: "50%",
-                  background: bullet === n ? "#1A1814" : "transparent",
-                  border: bullet === n ? "none" : "1px solid #9A9486",
-                  transition: "background 600ms ease",
-                }} />
-                <span>0{n}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -301,9 +342,9 @@ const SlideHome = ({ onGo, dense, focused }) => {
 // ----- 02 About -----
 const SlideAbout = ({ onGo, dense, focused }) => {
   const titleSize = focused ? "clamp(28px, 2.6vw, 44px)" : "clamp(13px, 1.3vw, 22px)";
-  const bodySize = focused ? "clamp(13px, 0.92vw, 16px)" : "clamp(9px, 0.78vw, 12px)";
-  const labelSize = focused ? 10 : 7;
-  const factSize = focused ? "clamp(12px, 0.85vw, 14px)" : "clamp(8px, 0.7vw, 11px)";
+  const bodySize = focused ? "clamp(14px, 0.92vw, 16px)" : "clamp(9px, 0.78vw, 12px)";
+  const labelSize = focused ? 11 : 7;
+  const factSize = focused ? "clamp(13px, 0.85vw, 14px)" : "clamp(8px, 0.7vw, 11px)";
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#F5F2EB" }}>
       <MiniNav label="About" active="about" onGo={onGo} dense={dense} />
@@ -312,9 +353,9 @@ const SlideAbout = ({ onGo, dense, focused }) => {
         display: "grid",
         gridTemplateColumns: "0.85fr 1.1fr 0.7fr",
         gap: focused ? 56 : 18,
-        padding: focused ? "5vh 7vw 4vh" : "3% 5% 3.5%",
-        minHeight: 0,
-      }} data-stack-mobile>
+        padding: focused ? "4vh 6vw 4vh" : "3% 5% 3.5%",
+        minHeight: 0, overflowY: focused ? "auto" : "hidden",
+      }} data-stack-mobile data-mobile-1col>
         {/* Column 1 — portrait + brand line */}
         <div style={{ display: "flex", flexDirection: "column", gap: focused ? 18 : 6 }}>
           <Photo tone={2} ratio="3/4" style={{ width: "100%" }}
@@ -380,7 +421,6 @@ const SlideAbout = ({ onGo, dense, focused }) => {
             ["Based in",     PROFILE.basedIn],
             ["Focus",        PROFILE.focus],
             ["Languages",    PROFILE.languages],
-            ["Channel",      "YouTube · " + CONTACT.youtubeHandle],
             ["Inquiry",      CONTACT.instagramHandle + " · KakaoTalk"],
           ].map(([k, v], i) => (
             <div key={i} style={{
@@ -418,18 +458,18 @@ const SlideAbout = ({ onGo, dense, focused }) => {
   );
 };
 
-// ----- 03 Work overview -----
-const SlideWork = ({ onGo, dense, focused }) => {
+// ----- 03 Portfolio overview -----
+const SlidePortfolio = ({ onGo, dense, focused }) => {
   const items = [
-    { n: "01", t: "Curating",  body: "Sisley Paris · JungKwang. Exhibition curation that turns a space into a story.", tone: 0, label: "INSTALL", target: "curating" },
-    { n: "02", t: "Docent",    body: "SFMOMA · MoMA · Sotheby's · National Museum of Korea · BVLGARI VIP. Reading the work, together.", tone: 2, label: "WALK · BY", target: "docent" },
-    { n: "03", t: "Lecture",   body: "Corporate lectures for LG · HANA BANK VIP · LOTTE. Where art connects to people.", tone: 1, label: "DESK", target: "lecture" },
+    { n: "01", t: "Projects",       body: "Sisley Paris · JungKwang. Exhibition curation that turns a space into a story.", label: "CURATION", target: "projects", img: "assets/img/sisley.webp" },
+    { n: "02", t: "Docent Program", body: "SFMOMA · MoMA · Sotheby's · National Museum of Korea · BVLGARI VIP. Reading the work, together.", label: "DOCENT", target: "docent", img: "assets/img/docent-01-sfmoma.webp" },
+    { n: "03", t: "Lectures",       body: "Corporate lectures for LG · HANA BANK VIP · LOTTE. Where art connects to people.", label: "LECTURE", target: "lecture", img: "assets/img/lecture-01-lg.webp" },
   ];
   const titleSize = focused ? "clamp(22px, 1.8vw, 32px)" : "clamp(11px, 1vw, 16px)";
   const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.7vw, 11px)";
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
-      <MiniNav label="Work" active="work" onGo={onGo} dense={dense} />
+      <MiniNav label="Portfolio" active="portfolio" onGo={onGo} dense={dense} />
       <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: focused ? 40 : 16, padding: focused ? "4vh 6vw" : "3% 5%", minHeight: 0 }} data-stack-mobile>
         {items.map(it => (
           <div key={it.n}
@@ -441,7 +481,7 @@ const SlideWork = ({ onGo, dense, focused }) => {
               fontWeight: 400, fontSize: titleSize,
               color: "#1A1814", margin: 0,
             }}>{it.t}</h3>
-            <Photo tone={it.tone} ratio="4/3" style={{ marginTop: focused ? 24 : 10 }} label={it.label} />
+            <Photo ratio="4/3" src={it.img} alt={it.t} style={{ marginTop: focused ? 24 : 10 }} label={it.label} objectPosition="center" />
             <p style={{
               margin: focused ? "20px 0 0" : "8px 0 0",
               fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
@@ -462,20 +502,20 @@ const SlideWork = ({ onGo, dense, focused }) => {
   );
 };
 
-// ----- 04 Curating — 2 cards (Sisley + JungKwang) -----
-const SlideCurating = ({ onGo, dense, focused }) => {
+// ----- 04 Projects — 2 cards (Sisley + JungKwang) -----
+const SlideProjects = ({ onGo, dense, focused }) => {
   const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(20px, 1.6vw, 28px)" : "clamp(10px, 0.9vw, 13px)";
   const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.72vw, 11px)";
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
-      <MiniNav label="Curating" active="work" onGo={onGo} dense={dense} />
+      <MiniNav label="Projects" active="projects" onGo={onGo} dense={dense} />
       <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
           fontWeight: 400, fontSize: titleSize,
           color: "#1A1814", margin: 0,
-        }}>Curating</h2>
+        }}>Projects</h2>
       </div>
       <div style={{
         flex: 1,
@@ -522,19 +562,18 @@ const SlideCurating = ({ onGo, dense, focused }) => {
 
 // ----- 05 Docent — 9 highlights grid -----
 const SlideDocent = ({ onGo, dense, focused }) => {
-  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
+  const titleSize = focused ? "clamp(32px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(8px, 0.7vw, 10px)";
   const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
-  // grid: 3x3 in focused, 3x3 compact in card
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
-      <MiniNav label="Docent" active="work" onGo={onGo} dense={dense} />
-      <div style={{ padding: focused ? "0 7vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }}>
+      <MiniNav label="Docent Program" active="docent" onGo={onGo} dense={dense} />
+      <div style={{ padding: focused ? "0 6vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }} data-mobile-pad>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
           fontWeight: 400, fontSize: titleSize,
           color: "#1A1814", margin: 0,
-        }}>Docent</h2>
+        }}>Docent Program</h2>
         {focused && (
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
@@ -544,8 +583,8 @@ const SlideDocent = ({ onGo, dense, focused }) => {
       </div>
       <div style={{
         flex: 1, minHeight: 0, overflow: focused ? "auto" : "hidden",
-        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
-      }}>
+        padding: focused ? "3vh 6vw 6vh" : "3% 5% 4%",
+      }} data-mobile-pad>
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
@@ -584,13 +623,13 @@ const SlideLecture = ({ onGo, dense, focused }) => {
   const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
-      <MiniNav label="Lecture" active="work" onGo={onGo} dense={dense} />
+      <MiniNav label="Lectures" active="lecture" onGo={onGo} dense={dense} />
       <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
           fontWeight: 400, fontSize: titleSize,
           color: "#1A1814", margin: 0,
-        }}>Lecture</h2>
+        }}>Lectures</h2>
         {focused && (
           <div style={{
             fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#7A7466",
@@ -599,11 +638,11 @@ const SlideLecture = ({ onGo, dense, focused }) => {
         )}
       </div>
       <div style={{
-        flex: 1, minHeight: 0,
+        flex: 1, minHeight: 0, overflow: focused ? "auto" : "hidden",
         display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
         gap: focused ? 32 : 12,
         padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
-      }} data-stack-mobile>
+      }} data-stack-mobile data-mobile-pad>
         {LECTURES.map((l, i) => (
           <a key={i} href={l.link} target="_blank" rel="noopener noreferrer"
              onClick={(e) => e.stopPropagation()}
@@ -635,71 +674,12 @@ const SlideLecture = ({ onGo, dense, focused }) => {
   );
 };
 
-// ----- 07 Channel (YouTube) — replaces generic Projects panel -----
-const SlideChannel = ({ onGo, dense, focused }) => {
-  const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
-  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(9px, 0.78vw, 12px)";
-  return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FAFAF7" }}>
-      <MiniNav label="Channel" active="projects" onGo={onGo} dense={dense} />
-      <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
-        <h2 style={{
-          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
-          fontWeight: 400, fontSize: titleSize,
-          color: "#1A1814", margin: 0,
-        }}>YouTube</h2>
-      </div>
-      <div style={{
-        flex: 1, display: "grid", gridTemplateColumns: "1.2fr 1fr",
-        gap: focused ? 56 : 14,
-        padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
-        minHeight: 0,
-      }} data-stack-mobile>
-        <Photo tone={1} ratio="4/3" src="assets/img/youtube.webp" alt="YouTube channel — SeungsunLee"
-               objectPosition="center"
-               label="@LEESEUNGSUN"
-               style={{ width: "100%", alignSelf: "center" }} />
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: focused ? 11 : 8, color: "#9A9486",
-            letterSpacing: 2, textTransform: "uppercase", marginBottom: focused ? 12 : 4,
-          }}>YouTube Channel</div>
-          <div style={{
-            fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
-            fontWeight: 400, fontSize: focused ? "clamp(22px, 1.8vw, 32px)" : "clamp(11px, 0.95vw, 14px)",
-            color: "#1A1814", margin: 0, lineHeight: 1.2,
-          }}>SeungsunLee</div>
-          <p style={{
-            margin: focused ? "16px 0 0" : "4px 0 0",
-            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
-            fontSize: bodySize, lineHeight: 1.7, color: "#5A5448", maxWidth: "30ch",
-          }}>
-            예술의 이야기를 더 가까이 — 영상으로 만나는 큐레이션과 도슨트.
-          </p>
-          {focused && (
-            <a href={CONTACT.youtube} target="_blank" rel="noopener noreferrer"
-               onClick={(e) => e.stopPropagation()}
-               style={{
-                 marginTop: 28,
-                 background: "#1A1814", color: "#FAFAF7", border: "1px solid #1A1814",
-                 padding: "12px 18px", display: "inline-block", width: "fit-content",
-                 fontFamily: "'Inter', sans-serif",
-                 fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase",
-                 textDecoration: "none",
-               }}>Subscribe →</a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ----- 08 Contact -----
 const SlideContact = ({ onGo, dense, focused }) => {
-  const titleSize = focused ? "clamp(28px, 2.6vw, 42px)" : "clamp(11px, 1.1vw, 18px)";
-  const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(9px, 0.78vw, 12px)";
-  const labelSize = focused ? 10 : 7;
+  const titleSize = focused ? "clamp(26px, 2.6vw, 42px)" : "clamp(11px, 1.1vw, 18px)";
+  const bodySize = focused ? "clamp(14px, 0.95vw, 15px)" : "clamp(9px, 0.78vw, 12px)";
+  const labelSize = focused ? 11 : 7;
   return (
     <div style={{ height: "100%", display: "flex", background: "#FAFAF7" }} data-stack-mobile>
       <div style={{ flex: 1, position: "relative", overflow: "hidden", background: "#EDE8DC" }} data-stack-photo>
@@ -740,14 +720,15 @@ const SlideContact = ({ onGo, dense, focused }) => {
               ["Email",      CONTACT.email,           "mailto:" + CONTACT.email],
               ["Instagram",  CONTACT.instagramHandle, CONTACT.instagram],
               ["KakaoTalk",  "Open Chat",             CONTACT.kakao],
-              ["YouTube",    CONTACT.youtubeHandle,   CONTACT.youtube],
             ].map(([k, v, href], i) => (
               <a key={i} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel="noopener noreferrer"
                  onClick={(e) => e.stopPropagation()}
                  style={{
-                   display: "flex", flexDirection: "column", gap: focused ? 4 : 1,
-                   borderTop: "1px solid #D8D2C2", paddingTop: focused ? 10 : 3,
-                   textDecoration: "none", color: "inherit",
+                   display: "flex", flexDirection: "column", gap: focused ? 5 : 1,
+                   borderTop: "1px solid #D8D2C2",
+                   paddingTop: focused ? 14 : 3, paddingBottom: focused ? 14 : 3,
+                   minHeight: focused ? 56 : "auto",
+                   textDecoration: "none", color: "inherit", justifyContent: "center",
                  }}>
                 <span style={{
                   fontFamily: "'JetBrains Mono', monospace",
@@ -774,31 +755,29 @@ const SlideContact = ({ onGo, dense, focused }) => {
 // ============================================================================
 
 const SLIDE_REGISTRY = {
-  home:     SlideHome,
-  about:    SlideAbout,
-  work:     SlideWork,
-  curating: SlideCurating,
-  docent:   SlideDocent,
-  lecture:  SlideLecture,
-  projects: SlideChannel,
-  contact:  SlideContact,
+  home:      SlideHome,
+  about:     SlideAbout,
+  portfolio: SlidePortfolio,
+  projects:  SlideProjects,
+  docent:    SlideDocent,
+  lecture:   SlideLecture,
+  contact:   SlideContact,
 };
 
 const GRID_LAYOUT = [
-  { key: "home",     area: "1 / 1 / 2 / 3", aspect: "16/9" },
-  { key: "about",    area: "2 / 1 / 3 / 2", aspect: "16/10" },
-  { key: "work",     area: "2 / 2 / 3 / 3", aspect: "16/10" },
-  { key: "curating", area: "3 / 1 / 4 / 2", aspect: "16/9" },
-  { key: "docent",   area: "3 / 2 / 4 / 3", aspect: "16/9" },
-  { key: "lecture",  area: "4 / 1 / 5 / 2", aspect: "16/9" },
-  { key: "projects", area: "4 / 2 / 5 / 3", aspect: "16/9" },
-  { key: "contact",  area: "5 / 1 / 6 / 3", aspect: "21/9" },
+  { key: "home",      area: "1 / 1 / 2 / 3", aspect: "16/9" },
+  { key: "about",     area: "2 / 1 / 3 / 2", aspect: "16/10" },
+  { key: "portfolio", area: "2 / 2 / 3 / 3", aspect: "16/10" },
+  { key: "projects",  area: "3 / 1 / 4 / 2", aspect: "16/9" },
+  { key: "docent",    area: "3 / 2 / 4 / 3", aspect: "16/9" },
+  { key: "lecture",   area: "4 / 1 / 5 / 3", aspect: "21/9" },
+  { key: "contact",   area: "5 / 1 / 6 / 3", aspect: "21/9" },
 ];
 
 const NAV_TO_SLIDE = {
-  home: "home", about: "about", work: "work",
-  projects: "projects", contact: "contact",
-  curating: "curating", docent: "docent", lecture: "lecture",
+  home: "home", about: "about", portfolio: "portfolio",
+  projects: "projects", docent: "docent", lecture: "lecture",
+  contact: "contact",
 };
 
 const App = () => {
