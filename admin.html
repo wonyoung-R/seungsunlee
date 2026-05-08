@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Seungsun Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', 'Noto Sans KR', sans-serif;
+  background: #F5F5F5;
+  color: #111;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font-family: inherit; font-size: 14px; }
+
+/* ── LAYOUT ── */
+.app   { display: none; min-height: 100vh; }
+.app.visible { display: flex; flex-direction: column; }
+.login { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+/* ── LOGIN ── */
+.login-box {
+  background: #FFF;
+  border: 1px solid #E2E2E2;
+  padding: 48px 44px;
+  width: 380px;
+}
+.login-title { font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+.login-sub   { color: #888; font-size: 12px; margin-bottom: 36px; }
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.field label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; }
+.field input {
+  border: 1px solid #E2E2E2;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #FAFAFA;
+}
+.field input:focus { border-color: #111; background: #FFF; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border: 1px solid #111;
+  background: #111;
+  color: #FFF;
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn:hover   { opacity: 0.75; }
+.btn.full    { width: 100%; margin-top: 8px; }
+.btn.ghost   { background: #FFF; color: #111; }
+.btn.danger  { background: #FFF; color: #CC3333; border-color: #CC3333; }
+.btn.small   { padding: 7px 14px; font-size: 10px; }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.error-msg { color: #CC3333; font-size: 12px; margin-top: 12px; min-height: 18px; }
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 60px;
+  background: #FFF;
+  border-bottom: 1px solid #E2E2E2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title { font-size: 13px; font-weight: 500; letter-spacing: 0.03em; }
+.topbar-right { display: flex; align-items: center; gap: 20px; }
+.topbar-user  { font-size: 11px; color: #888; }
+
+/* ── MAIN ── */
+.main { padding: 40px 36px 80px; max-width: 1100px; margin: 0 auto; }
+
+/* ── CARD ── */
+.card {
+  background: #FFF;
+  border: 1px solid #E2E2E2;
+  padding: 32px 36px;
+  margin-bottom: 32px;
+}
+.card-title {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EBEBEB;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+.form-grid .span2 { grid-column: 1 / -1; }
+.form-field { display: flex; flex-direction: column; gap: 7px; }
+.form-field label { font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; }
+.form-field input,
+.form-field select,
+.form-field textarea {
+  border: 1px solid #E2E2E2;
+  padding: 10px 14px;
+  outline: none;
+  background: #FAFAFA;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus { border-color: #111; background: #FFF; }
+.form-field textarea { resize: vertical; min-height: 70px; }
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.form-msg { font-size: 12px; color: #888; }
+.form-msg.ok  { color: #228B22; }
+.form-msg.err { color: #CC3333; }
+
+/* ── IMAGE UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed #D8D2C2;
+  background: #FAFAF7;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.upload-zone:hover,
+.upload-zone.drag-over { border-color: #111; background: #F5F2EB; }
+.upload-zone input[type="file"] {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+  border: none; background: none; padding: 0;
+}
+.upload-icon { font-size: 28px; line-height: 1; color: #C8C2B2; }
+.upload-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #9A9486; }
+.upload-hint  { font-size: 11px; color: #B0A998; }
+
+.upload-preview {
+  display: none;
+  position: relative;
+  width: 100%;
+}
+.upload-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.upload-preview-remove {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(0,0,0,0.55);
+  color: #FFF;
+  border: none;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.upload-progress {
+  display: none;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── TABLE ── */
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.table-header h2 { font-size: 15px; font-weight: 500; }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid #E2E2E2;
+  background: #FFF;
+  color: #888;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.filter-btn:hover  { border-color: #111; color: #111; }
+.filter-btn.active { border-color: #111; background: #111; color: #FFF; }
+table { width: 100%; border-collapse: collapse; background: #FFF; border: 1px solid #E2E2E2; }
+th {
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #888;
+  padding: 14px 18px;
+  border-bottom: 1px solid #E2E2E2;
+  font-weight: 500;
+  background: #FAFAFA;
+}
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #F0F0F0;
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #FAFAFA; }
+.td-thumb {
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  background: #EBEBEB;
+  flex-shrink: 0;
+  display: block;
+}
+.td-thumb-empty {
+  width: 56px; height: 42px;
+  background: #EBEBEB;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #CCC;
+}
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid #E2E2E2;
+  color: #777;
+}
+.table-actions { display: flex; gap: 8px; }
+.loading-row td { text-align: center; color: #AAA; padding: 48px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── EDIT ROW ── */
+.edit-row td { background: #FFFDF7; }
+.edit-input {
+  border: 1px solid #E2E2E2;
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+  background: #FFF;
+}
+.edit-input:focus { border-color: #111; }
+.edit-img-preview {
+  width: 80px; height: 60px;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 8px;
+  border: 1px solid #E2E2E2;
+}
+.edit-upload-btn {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid #D8D2C2;
+  background: #FAFAF7;
+  cursor: pointer;
+  color: #5A5448;
+  transition: border-color 0.2s;
+}
+.edit-upload-btn:hover { border-color: #111; }
+.edit-upload-input { display: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .topbar { padding: 0 20px; }
+  .main   { padding: 24px 16px 60px; }
+  .card   { padding: 24px 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .span2 { grid-column: 1; }
+  th:nth-child(4), td:nth-child(4),
+  th:nth-child(5), td:nth-child(5) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login" id="loginView">
+  <div class="login-box">
+    <p class="login-title">Seungsun Lee</p>
+    <p class="login-sub">관리자 로그인</p>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPw" placeholder="••••••••" />
+    </div>
+    <button class="btn full" id="loginBtn">로그인</button>
+    <p class="error-msg" id="loginErr"></p>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div class="app" id="appView">
+
+  <div class="topbar">
+    <span class="topbar-title">Seungsun Lee — Admin</span>
+    <div class="topbar-right">
+      <span class="topbar-user" id="userEmail"></span>
+      <button class="btn ghost small" id="logoutBtn">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ── ADD FORM ── -->
+    <div class="card">
+      <p class="card-title">새 이력 추가</p>
+      <form id="addForm" autocomplete="off">
+        <div class="form-grid">
+
+          <div class="form-field">
+            <label>카테고리 *</label>
+            <select id="fCat" required>
+              <option value="">선택하세요</option>
+              <option value="curation">Curation / Project</option>
+              <option value="docent">Docent</option>
+              <option value="talk">Talk</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>연도</label>
+            <input type="number" id="fYear" placeholder="예: 2025" min="2000" max="2099" />
+          </div>
+
+          <div class="form-field span2">
+            <label>제목 *</label>
+            <input type="text" id="fTitle" placeholder="예: SFMOMA" required />
+          </div>
+
+          <div class="form-field span2">
+            <label>부제목</label>
+            <input type="text" id="fSub" placeholder="예: Art Tour Director & Docent" />
+          </div>
+
+          <div class="form-field span2">
+            <label>설명 (선택)</label>
+            <textarea id="fDesc" placeholder="간단한 설명을 입력하세요"></textarea>
+          </div>
+
+          <div class="form-field span2">
+            <label>인스타그램 링크 (선택)</label>
+            <input type="url" id="fLink" placeholder="https://www.instagram.com/p/..." />
+          </div>
+
+          <!-- 이미지 업로드 존 -->
+          <div class="form-field span2">
+            <label>이미지</label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="fImgFile" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif" />
+              <div class="upload-icon">↑</div>
+              <div class="upload-label">클릭하거나 이미지를 드래그하세요</div>
+              <div class="upload-hint">JPG · PNG · WEBP · GIF · 최대 10MB</div>
+            </div>
+            <div class="upload-preview" id="uploadPreview">
+              <img id="uploadPreviewImg" src="" alt="preview" />
+              <button type="button" class="upload-preview-remove" id="removeImgBtn" title="이미지 제거">✕</button>
+            </div>
+            <div class="upload-progress" id="uploadProgress">업로드 중...</div>
+          </div>
+
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn" id="addBtn">추가하기</button>
+          <span class="form-msg" id="addMsg"></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- ── TABLE ── -->
+    <div class="table-header">
+      <h2>전체 이력</h2>
+      <div class="filter-row">
+        <button class="filter-btn active" data-cat="all">전체</button>
+        <button class="filter-btn" data-cat="curation">Curation</button>
+        <button class="filter-btn" data-cat="docent">Docent</button>
+        <button class="filter-btn" data-cat="talk">Talk</button>
+      </div>
+    </div>
+
+    <table id="worksTable">
+      <thead>
+        <tr>
+          <th style="width:70px">이미지</th>
+          <th>제목</th>
+          <th style="width:120px">카테고리</th>
+          <th style="width:72px">연도</th>
+          <th>부제목</th>
+          <th style="width:160px">관리</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr class="loading-row"><td colspan="6">불러오는 중...</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+// ── CONFIG ────────────────────────────────────────────
+const SUPABASE_URL = 'https://khefqzmssgwbztgvrbte.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoZWZxem1zc2d3Ynp0Z3ZyYnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNjI3NDksImV4cCI6MjA5MzYzODc0OX0.uQGjtnZMQhOCykj-X0Bb0bFlOuE1cup8cKJeWL35fm8';
+const BUCKET = 'work-images';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const CAT_KR = { curation: 'Curation', docent: 'Docent', talk: 'Talk' };
+let allWorks  = [];
+let filterCat = 'all';
+let editingId = null;
+let pendingFile = null; // 업로드 대기 중인 파일
+
+// ── AUTH ──────────────────────────────────────────────
+async function checkSession() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) showApp(session.user.email);
+}
+
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value;
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('loginErr').textContent = '';
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
+  document.getElementById('loginBtn').disabled = false;
+
+  if (error) {
+    document.getElementById('loginErr').textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+    return;
+  }
+  showApp(data.user.email);
+}
+
+async function logout() {
+  await db.auth.signOut();
+  document.getElementById('appView').classList.remove('visible');
+  document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('loginPw').value = '';
+}
+
+function showApp(email) {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').classList.add('visible');
+  document.getElementById('userEmail').textContent = email;
+  loadWorks();
+}
+
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// ── STORAGE — 이미지 업로드 ───────────────────────────
+async function uploadToStorage(file) {
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const name = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const path = name;
+
+  const { error } = await db.storage.from(BUCKET).upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type,
+  });
+
+  if (error) throw new Error(error.message);
+
+  const { data } = db.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+// ── 업로드 존 UI ──────────────────────────────────────
+const uploadZone    = document.getElementById('uploadZone');
+const fileInput     = document.getElementById('fImgFile');
+const previewWrap   = document.getElementById('uploadPreview');
+const previewImg    = document.getElementById('uploadPreviewImg');
+const removeImgBtn  = document.getElementById('removeImgBtn');
+
+function showPreview(file) {
+  pendingFile = file;
+  const url = URL.createObjectURL(file);
+  previewImg.src = url;
+  uploadZone.style.display   = 'none';
+  previewWrap.style.display  = 'block';
+}
+
+function clearPreview() {
+  pendingFile = null;
+  fileInput.value = '';
+  previewImg.src = '';
+  uploadZone.style.display   = 'flex';
+  previewWrap.style.display  = 'none';
+}
+
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) showPreview(file);
+});
+
+removeImgBtn.addEventListener('click', clearPreview);
+
+// 드래그 앤 드롭
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) showPreview(file);
+});
+
+// ── WORKS CRUD ────────────────────────────────────────
+async function loadWorks() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="6">불러오는 중...</td></tr>';
+  const { data, error } = await db.from('works').select('*').order('category').order('sort_order');
+  if (error) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6">불러오기 실패</td></tr>';
+    return;
+  }
+  allWorks = data || [];
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const works = filterCat === 'all' ? allWorks : allWorks.filter(w => w.category === filterCat);
+  if (!works.length) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6">이력이 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = works.map(w => {
+    const thumb = w.image_path
+      ? `<img class="td-thumb" src="${escHtml(w.image_path)}" alt="" />`
+      : `<div class="td-thumb-empty">—</div>`;
+    return `
+      <tr data-id="${w.id}">
+        <td>${thumb}</td>
+        <td><strong>${escHtml(w.title)}</strong></td>
+        <td><span class="badge">${CAT_KR[w.category] || w.category}</span></td>
+        <td>${w.year || '—'}</td>
+        <td style="color:#888;font-size:12px">${escHtml(w.subtitle || '—')}</td>
+        <td>
+          <div class="table-actions">
+            <button class="btn ghost small" onclick="startEdit('${w.id}')">수정</button>
+            <button class="btn danger small" onclick="deleteWork('${w.id}')">삭제</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+// ── ADD ───────────────────────────────────────────────
+document.getElementById('addForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn  = document.getElementById('addBtn');
+  const msg  = document.getElementById('addMsg');
+  const prog = document.getElementById('uploadProgress');
+  btn.disabled = true;
+  msg.textContent = '';
+  msg.className = 'form-msg';
+
+  let imagePath = null;
+
+  // 파일이 있으면 Storage에 업로드
+  if (pendingFile) {
+    prog.style.display = 'block';
+    msg.textContent = '이미지 업로드 중...';
+    try {
+      imagePath = await uploadToStorage(pendingFile);
+    } catch (err) {
+      msg.textContent = '이미지 업로드 실패: ' + err.message;
+      msg.className = 'form-msg err';
+      btn.disabled = false;
+      prog.style.display = 'none';
+      return;
+    }
+    prog.style.display = 'none';
+  }
+
+  const payload = {
+    title:       document.getElementById('fTitle').value.trim(),
+    subtitle:    document.getElementById('fSub').value.trim() || null,
+    category:    document.getElementById('fCat').value,
+    year:        document.getElementById('fYear').value ? parseInt(document.getElementById('fYear').value) : null,
+    description: document.getElementById('fDesc').value.trim() || null,
+    image_path:  imagePath,
+    link:        document.getElementById('fLink').value.trim() || null,
+    sort_order:  allWorks.filter(w => w.category === document.getElementById('fCat').value).length + 1,
+  };
+
+  msg.textContent = 'DB 저장 중...';
+  const { error } = await db.from('works').insert(payload);
+  btn.disabled = false;
+
+  if (error) {
+    msg.textContent = '저장 실패: ' + error.message;
+    msg.className = 'form-msg err';
+    return;
+  }
+
+  msg.textContent = '✓ 추가 완료!';
+  msg.className = 'form-msg ok';
+  document.getElementById('addForm').reset();
+  clearPreview();
+  setTimeout(() => { msg.textContent = ''; }, 2500);
+  loadWorks();
+});
+
+// ── EDIT ──────────────────────────────────────────────
+function startEdit(id) {
+  const w = allWorks.find(x => x.id === id);
+  if (!w) return;
+  editingId = id;
+
+  const currentImg = w.image_path
+    ? `<img class="edit-img-preview" id="eImgPreview" src="${escHtml(w.image_path)}" alt="" />`
+    : `<div id="eImgPreview" style="width:80px;height:60px;background:#EBEBEB;display:flex;align-items:center;justify-content:center;font-size:10px;color:#CCC;margin-bottom:8px">없음</div>`;
+
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  row.innerHTML = `
+    <td colspan="5">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;padding:4px 0">
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">제목</div>
+          <input class="edit-input" id="eTitle" value="${escHtml(w.title)}" />
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">카테고리</div>
+          <select class="edit-input" id="eCat">
+            <option value="curation" ${w.category==='curation'?'selected':''}>Curation</option>
+            <option value="docent"   ${w.category==='docent'  ?'selected':''}>Docent</option>
+            <option value="talk"     ${w.category==='talk'    ?'selected':''}>Talk</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">연도</div>
+          <input class="edit-input" id="eYear" type="number" value="${w.year||''}" />
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">부제목</div>
+          <input class="edit-input" id="eSub" value="${escHtml(w.subtitle||'')}" />
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">링크</div>
+          <input class="edit-input" id="eLink" value="${escHtml(w.link||'')}" />
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:8px">이미지</div>
+          ${currentImg}
+          <label class="edit-upload-btn">
+            📎 이미지 교체
+            <input type="file" class="edit-upload-input" id="eImgFile"
+              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+              onchange="previewEditImage(this)" />
+          </label>
+          <span style="font-size:11px;color:#B0A998;margin-left:8px" id="eImgName"></span>
+        </div>
+      </div>
+    </td>
+    <td>
+      <div class="table-actions" style="flex-direction:column;gap:6px">
+        <button class="btn small" onclick="saveEdit('${id}')">저장</button>
+        <button class="btn ghost small" onclick="loadWorks()">취소</button>
+      </div>
+    </td>`;
+  row.classList.add('edit-row');
+}
+
+function previewEditImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const preview = document.getElementById('eImgPreview');
+  const nameEl  = document.getElementById('eImgName');
+  if (preview.tagName === 'IMG') {
+    preview.src = URL.createObjectURL(file);
+  } else {
+    const img = document.createElement('img');
+    img.className = 'edit-img-preview';
+    img.id = 'eImgPreview';
+    img.src = URL.createObjectURL(file);
+    preview.replaceWith(img);
+  }
+  nameEl.textContent = file.name;
+}
+
+async function saveEdit(id) {
+  const w = allWorks.find(x => x.id === id);
+  if (!w) return;
+
+  const saveBtn = document.querySelector(`tr[data-id="${id}"] .btn:not(.ghost)`);
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '저장 중...'; }
+
+  let imagePath = w.image_path;
+  const eImgFile = document.getElementById('eImgFile');
+  const newFile  = eImgFile && eImgFile.files[0];
+
+  if (newFile) {
+    try {
+      imagePath = await uploadToStorage(newFile);
+    } catch (err) {
+      alert('이미지 업로드 실패: ' + err.message);
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '저장'; }
+      return;
+    }
+  }
+
+  const payload = {
+    title:      document.getElementById('eTitle').value.trim(),
+    category:   document.getElementById('eCat').value,
+    year:       document.getElementById('eYear').value ? parseInt(document.getElementById('eYear').value) : null,
+    subtitle:   document.getElementById('eSub').value.trim() || null,
+    link:       document.getElementById('eLink').value.trim() || null,
+    image_path: imagePath,
+  };
+
+  const { error } = await db.from('works').update(payload).eq('id', id);
+  if (error) { alert('수정 실패: ' + error.message); return; }
+  editingId = null;
+  loadWorks();
+}
+
+async function deleteWork(id) {
+  const w = allWorks.find(x => x.id === id);
+  if (!confirm(`"${w?.title}" 을 삭제하시겠어요?`)) return;
+  const { error } = await db.from('works').delete().eq('id', id);
+  if (error) { alert('삭제 실패: ' + error.message); return; }
+  loadWorks();
+}
+
+// ── FILTER TABS ───────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterCat = btn.dataset.cat;
+    renderTable();
+  });
+});
+
+// ── UTILS ─────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── INIT ──────────────────────────────────────────────
+checkSession();
+</script>
+</body>
+</html>
