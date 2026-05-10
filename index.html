@@ -729,6 +729,7 @@ const SlidePortfolio = ({ onGo, dense, focused }) => {
         gap: focused ? "0 36px" : "0 10px",
         padding: focused ? "2vh 6vw 4vh" : "3% 5% 4%",
         minHeight: 0, alignItems: "start",
+        overflowY: focused ? "auto" : "hidden",
       }}>
         {items.map(it => (
           <div key={it.n}
@@ -783,7 +784,7 @@ const SlideProjects = ({ onGo, dense, focused }) => {
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Projects" active="projects" onGo={onGo} dense={dense} />
-      <div style={{ padding: focused ? "0 7vw" : "0 5%" }}>
+      <div style={{ padding: focused ? "0 7vw" : "0 5%", flexShrink: 0 }}>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
           fontWeight: 400, fontSize: titleSize,
@@ -796,6 +797,7 @@ const SlideProjects = ({ onGo, dense, focused }) => {
         gap: focused ? 56 : 14,
         padding: focused ? "4vh 7vw 6vh" : "3% 5% 4%",
         minHeight: 0,
+        overflowY: focused ? "auto" : "hidden",
       }} data-stack-mobile>
         {CURATIONS.map(c => (
           <a key={c.key} href={c.link} target="_blank" rel="noopener noreferrer"
@@ -841,7 +843,7 @@ const SlideDocent = ({ onGo, dense, focused }) => {
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Docent" active="docent" onGo={onGo} dense={dense} />
-      <div style={{ padding: focused ? "0 6vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }} data-mobile-pad>
+      <div style={{ padding: focused ? "0 6vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12, flexShrink: 0 }} data-mobile-pad>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
           fontWeight: 400, fontSize: titleSize,
@@ -855,7 +857,7 @@ const SlideDocent = ({ onGo, dense, focused }) => {
         )}
       </div>
       <div style={{
-        flex: 1, minHeight: 0, overflow: focused ? "auto" : "hidden",
+        flex: 1, minHeight: 0, overflowY: focused ? "auto" : "hidden",
         padding: focused ? "3vh 6vw 6vh" : "3% 5% 4%",
       }} data-mobile-pad>
         <div style={{
