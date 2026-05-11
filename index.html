@@ -1305,7 +1305,7 @@ const App = () => {
 
   React.useEffect(() => {
     const sb = window.supabase.createClient(SB_URL, SB_KEY);
-    sb.from('works').select('*').eq('category', 'lecture').order('sort_order')
+    sb.from('works').select('*').eq('category', 'signature_lecture').order('sort_order')
       .then(({ data }) => { if (data) setSigLectures(data); });
   }, []);
 

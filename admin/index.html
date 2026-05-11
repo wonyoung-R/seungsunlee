@@ -350,7 +350,8 @@ tr:hover td { background: #FAFAFA; }
               <option value="">선택하세요</option>
               <option value="curation">Curation / Project</option>
               <option value="docent">Docent</option>
-              <option value="lecture">Lecture</option>
+              <option value="lecture">Lecture (기업 강연)</option>
+              <option value="signature_lecture">Signature Lecture</option>
               <option value="talk">Talk</option>
             </select>
           </div>
@@ -409,6 +410,7 @@ tr:hover td { background: #FAFAFA; }
         <button class="filter-btn" data-cat="curation">Curation</button>
         <button class="filter-btn" data-cat="docent">Docent</button>
         <button class="filter-btn" data-cat="lecture">Lecture</button>
+        <button class="filter-btn" data-cat="signature_lecture">Signature Lecture</button>
         <button class="filter-btn" data-cat="talk">Talk</button>
       </div>
     </div>
@@ -440,7 +442,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const BUCKET = 'work-images';
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const CAT_KR = { curation: 'Curation', docent: 'Docent', lecture: 'Lecture', talk: 'Talk' };
+const CAT_KR = { curation: 'Curation', docent: 'Docent', lecture: 'Lecture', signature_lecture: 'Signature Lecture', talk: 'Talk' };
 let allWorks   = [];
 let filterCat  = 'all';
 let editingId  = null;
@@ -752,10 +754,11 @@ function startEdit(id) {
         <div>
           <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:5px">카테고리</div>
           <select class="edit-input" id="eCat">
-            <option value="curation" ${w.category==='curation'?'selected':''}>Curation</option>
-            <option value="docent"   ${w.category==='docent'  ?'selected':''}>Docent</option>
-            <option value="lecture"  ${w.category==='lecture' ?'selected':''}>Lecture</option>
-            <option value="talk"     ${w.category==='talk'    ?'selected':''}>Talk</option>
+            <option value="curation"          ${w.category==='curation'          ?'selected':''}>Curation</option>
+            <option value="docent"            ${w.category==='docent'            ?'selected':''}>Docent</option>
+            <option value="lecture"           ${w.category==='lecture'           ?'selected':''}>Lecture (기업 강연)</option>
+            <option value="signature_lecture" ${w.category==='signature_lecture' ?'selected':''}>Signature Lecture</option>
+            <option value="talk"              ${w.category==='talk'              ?'selected':''}>Talk</option>
           </select>
         </div>
         <div>
