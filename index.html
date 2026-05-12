@@ -1315,8 +1315,29 @@ const App = () => {
 
   React.useEffect(() => {
     const sb = window.supabase.createClient(SB_URL, SB_KEY);
-    sb.from('works').select('*').eq('category', 'signature_lecture').order('sort_order')
+    const fetchSig = () => sb.from('works').select('*')
+      .eq('category', 'signature_lecture')
+      .is('deleted_at', null)
+      .order('sort_order')
       .then(({ data }) => { if (data) setSigLectures(data); });
+
+    fetchSig();
+
+    // A. Supabase Realtime — admin 변경 시 자동 push
+    const channel = sb.channel('works-public')
+      .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'works' },
+          () => fetchSig())
+      .subscribe();
+
+    // B. 탭 포커스 복귀 시 재fetch (Realtime 단절 대비 안전망)
+    const onFocus = () => fetchSig();
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      sb.removeChannel(channel);
+      window.removeEventListener('focus', onFocus);
+    };
   }, []);
 
   const openSlide = (key) => {
