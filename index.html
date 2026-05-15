@@ -792,16 +792,18 @@ const SlidePortfolio = ({ onGo, dense, focused }) => {
 // ----- 04 Projects — 2 cards (Sisley + JungKwang) -----
 const SlideProjects = ({ onGo, dense, focused }) => {
   const curationsDb = React.useContext(CurationCtx);
+  const [lightboxData, setLightboxData] = React.useState(null);
   const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(20px, 1.6vw, 28px)" : "clamp(10px, 0.9vw, 13px)";
   const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.72vw, 11px)";
 
   // DB row → 카드 형태로 매핑. 비어있으면 하드코딩 CURATIONS fallback.
+  // imgs 배열을 보존해서 라이트박스 분기에 사용.
   const items = curationsDb.length > 0
     ? curationsDb.map(w => {
-        const img = (Array.isArray(w.images) && w.images.length > 0 && w.images[0].url)
-          ? w.images[0].url
-          : (w.image_path || null);
+        const imgs = Array.isArray(w.images) && w.images.length > 0
+          ? w.images
+          : (w.image_path ? [{ url: w.image_path, caption: "" }] : []);
         const yearPart = w.year ? `${w.year} · ` : "";
         const body = w.description
           ? `${yearPart}${w.description}`
@@ -811,14 +813,21 @@ const SlideProjects = ({ onGo, dense, focused }) => {
           title: w.title,
           subtitle: w.subtitle || "",
           body,
-          img,
+          year: w.year || null,
+          imgs,
+          img: imgs[0]?.url || null,
           label: w.year ? `CURATION · ${w.year}` : "CURATION",
           link: w.link || CONTACT.instagram,
         };
       })
-    : CURATIONS;
+    : CURATIONS.map(c => ({
+        ...c,
+        imgs: c.img ? [{ url: c.img, caption: "" }] : [],
+        year: null,
+      }));
 
   return (
+    <>
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Projects" active="projects" onGo={onGo} dense={dense} />
       <div style={{ padding: focused ? "0 7vw" : "0 5%", flexShrink: 0 }}>
@@ -836,68 +845,106 @@ const SlideProjects = ({ onGo, dense, focused }) => {
         minHeight: 0,
         overflowY: focused ? "auto" : "hidden",
       }} data-stack-mobile>
-        {items.map(c => (
-          <a key={c.key} href={c.link} target="_blank" rel="noopener noreferrer"
-             onClick={(e) => e.stopPropagation()}
-             style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
-            <Photo tone={1} ratio="16/9" src={c.img} alt={c.title} label={c.label} style={{ width: "100%" }} />
-            <div style={{ marginTop: focused ? 22 : 8 }}>
-              <h3 style={{
-                fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
-                fontWeight: 400, fontSize: cardTitleSize,
-                color: "#1A1814", margin: 0, lineHeight: 1.2,
-              }}>{c.title}</h3>
-              {focused && (
-                <div style={{
-                  fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
-                  fontSize: bodySize, color: "#5A5448",
-                  marginTop: 8, lineHeight: 1.65, whiteSpace: "pre-line",
-                }}>
-                  {c.subtitle && (
-                    <div style={{ fontWeight: 500, color: "#1A1814", marginBottom: 4 }}>{c.subtitle}</div>
-                  )}
-                  {c.body}
-                </div>
-              )}
-              {focused && (
-                <div style={{
-                  marginTop: 14,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 10, color: "#9A9486", letterSpacing: 1.5, textTransform: "uppercase",
-                }}>View on Instagram →</div>
-              )}
+        {items.map(c => {
+          const hasImgs = c.imgs && c.imgs.length > 0;
+          const hasMany = c.imgs && c.imgs.length > 1;
+          return (
+            <div key={c.key}
+                 onClick={(e) => e.stopPropagation()}
+                 style={{ display: "flex", flexDirection: "column", color: "inherit" }}>
+              {/* 이미지 — 클릭 시 라이트박스 (이미지 없으면 인스타 링크로 fallback) */}
+              <div
+                onClick={() => {
+                  if (hasImgs) {
+                    setLightboxData({ images: c.imgs, title: c.title, subtitle: c.subtitle, year: c.year, link: c.link });
+                  } else if (c.link) {
+                    window.open(c.link, "_blank", "noopener,noreferrer");
+                  }
+                }}
+                style={{ position: "relative", cursor: (hasImgs || c.link) ? "pointer" : "default" }}
+              >
+                <Photo tone={1} ratio="16/9" src={c.img} alt={c.title} label={c.label} style={{ width: "100%" }} />
+                {hasMany && (
+                  <div style={{
+                    position: "absolute", top: 8, right: 8,
+                    background: "rgba(0,0,0,0.45)", color: "#FFF",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 9, padding: "3px 7px", letterSpacing: 1, borderRadius: 2,
+                  }}>1 / {c.imgs.length}</div>
+                )}
+              </div>
+              <div style={{ marginTop: focused ? 22 : 8 }}>
+                <h3 style={{
+                  fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+                  fontWeight: 400, fontSize: cardTitleSize,
+                  color: "#1A1814", margin: 0, lineHeight: 1.2,
+                }}>{c.title}</h3>
+                {focused && (
+                  <div style={{
+                    fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+                    fontSize: bodySize, color: "#5A5448",
+                    marginTop: 8, lineHeight: 1.65, whiteSpace: "pre-line",
+                  }}>
+                    {c.subtitle && (
+                      <div style={{ fontWeight: 500, color: "#1A1814", marginBottom: 4 }}>{c.subtitle}</div>
+                    )}
+                    {c.body}
+                  </div>
+                )}
+                {focused && (hasImgs || c.link) && (
+                  <div style={{
+                    marginTop: 14,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 10, color: "#9A9486", letterSpacing: 1.5, textTransform: "uppercase",
+                  }}>{hasMany ? `${c.imgs.length} 사진 보기 →` : (hasImgs ? "크게 보기 →" : "View on Instagram →")}</div>
+                )}
+              </div>
             </div>
-          </a>
-        ))}
+          );
+        })}
       </div>
     </div>
+    {lightboxData && (
+      <LightboxModal data={lightboxData} onClose={() => setLightboxData(null)} />
+    )}
+    </>
   );
 };
 
 // ----- 05 Docent — 9 highlights grid -----
 const SlideDocent = ({ onGo, dense, focused }) => {
   const docentsDb = React.useContext(DocentCtx);
+  const [lightboxData, setLightboxData] = React.useState(null);
   const titleSize = focused ? "clamp(32px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(8px, 0.7vw, 10px)";
   const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
 
   // DB row → 카드 형태 매핑. 비어있으면 하드코딩 DOCENT_HIGHLIGHTS fallback.
+  // imgs 배열 보존: 여러 장 → 라이트박스, 단일/없음 → 인스타 fallback.
   const items = docentsDb.length > 0
     ? docentsDb.map(w => {
-        const img = (Array.isArray(w.images) && w.images.length > 0 && w.images[0].url)
-          ? w.images[0].url
-          : (w.image_path || null);
+        const imgs = Array.isArray(w.images) && w.images.length > 0
+          ? w.images
+          : (w.image_path ? [{ url: w.image_path, caption: "" }] : []);
         return {
           key: w.id,
           title: w.title,
           sub: w.subtitle || w.description || "",
-          img,
+          year: w.year || null,
+          imgs,
+          img: imgs[0]?.url || null,
           link: w.link || CONTACT.instagram,
         };
       })
-    : DOCENT_HIGHLIGHTS.map((d, i) => ({ ...d, key: i }));
+    : DOCENT_HIGHLIGHTS.map((d, i) => ({
+        ...d,
+        key: i,
+        imgs: d.img ? [{ url: d.img, caption: "" }] : [],
+        year: null,
+      }));
 
   return (
+    <>
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Docent" active="docent" onGo={onGo} dense={dense} />
       <div style={{ padding: focused ? "0 6vw" : "0 5%", display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12, flexShrink: 0 }} data-mobile-pad>
@@ -922,28 +969,55 @@ const SlideDocent = ({ onGo, dense, focused }) => {
           gridTemplateColumns: "repeat(3, 1fr)",
           gap: focused ? 24 : 8,
         }} data-grid-3>
-          {items.map((d, i) => (
-            <a key={d.key} href={d.link} target="_blank" rel="noopener noreferrer"
-               onClick={(e) => e.stopPropagation()}
-               style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
-              <Photo tone={i % 4} ratio="1/1" src={d.img} alt={d.title} style={{ width: "100%" }} />
-              <div style={{ marginTop: focused ? 12 : 4 }}>
-                <div style={{
-                  fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
-                  fontWeight: 500, fontSize: cardTitleSize,
-                  color: "#1A1814", lineHeight: 1.2,
-                }}>{d.title}</div>
-                <div style={{
-                  fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
-                  fontSize: subSize, color: "#7A7466",
-                  marginTop: focused ? 4 : 2, lineHeight: 1.4,
-                }}>{d.sub}</div>
+          {items.map((d, i) => {
+            const hasImgs = d.imgs && d.imgs.length > 0;
+            const hasMany = d.imgs && d.imgs.length > 1;
+            return (
+              <div key={d.key}
+                   onClick={(e) => e.stopPropagation()}
+                   style={{ display: "flex", flexDirection: "column", color: "inherit" }}>
+                <div
+                  onClick={() => {
+                    if (hasImgs) {
+                      setLightboxData({ images: d.imgs, title: d.title, subtitle: d.sub, year: d.year, link: d.link });
+                    } else if (d.link) {
+                      window.open(d.link, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                  style={{ position: "relative", cursor: (hasImgs || d.link) ? "pointer" : "default" }}
+                >
+                  <Photo tone={i % 4} ratio="1/1" src={d.img} alt={d.title} style={{ width: "100%" }} />
+                  {hasMany && (
+                    <div style={{
+                      position: "absolute", top: 6, right: 6,
+                      background: "rgba(0,0,0,0.45)", color: "#FFF",
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 9, padding: "2px 6px", letterSpacing: 1, borderRadius: 2,
+                    }}>1 / {d.imgs.length}</div>
+                  )}
+                </div>
+                <div style={{ marginTop: focused ? 12 : 4 }}>
+                  <div style={{
+                    fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+                    fontWeight: 500, fontSize: cardTitleSize,
+                    color: "#1A1814", lineHeight: 1.2,
+                  }}>{d.title}</div>
+                  <div style={{
+                    fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+                    fontSize: subSize, color: "#7A7466",
+                    marginTop: focused ? 4 : 2, lineHeight: 1.4,
+                  }}>{d.sub}</div>
+                </div>
               </div>
-            </a>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
+    {lightboxData && (
+      <LightboxModal data={lightboxData} onClose={() => setLightboxData(null)} />
+    )}
+    </>
   );
 };
 
