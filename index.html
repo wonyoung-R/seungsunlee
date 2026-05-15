@@ -536,6 +536,194 @@ const LightboxModal = ({ data, onClose }) => {
   );
 };
 
+// ── 인라인 확장 패널 (라이트박스 대체) ─────────────────────────────────────
+// 그리드 안의 카드 자리에서 grid-column 1/-1 로 펼쳐지는 인라인 갤러리.
+const ExpandedPanel = ({ item, onClose }) => {
+  const { imgs, title, subtitle, body, year, link } = item;
+  const [idx, setIdx] = React.useState(0);
+  const thumbRefs = React.useRef({});
+  const containerRef = React.useRef(null);
+  const total = imgs.length;
+
+  React.useEffect(() => {
+    const el = thumbRefs.current[idx];
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [idx]);
+
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape")     onClose();
+      if (e.key === "ArrowLeft")  setIdx(i => (i - 1 + total) % total);
+      if (e.key === "ArrowRight") setIdx(i => (i + 1) % total);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [total, onClose]);
+
+  React.useEffect(() => {
+    if (containerRef.current && containerRef.current.scrollIntoView) {
+      containerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  const prev = () => setIdx(i => (i - 1 + total) % total);
+  const next = () => setIdx(i => (i + 1) % total);
+
+  return (
+    <div ref={containerRef}
+         onClick={(e) => e.stopPropagation()}
+         style={{
+           gridColumn: "1 / -1",
+           background: "#FFFFFF",
+           border: "1px solid #EBEBEB",
+           position: "relative",
+           animation: "expandIn 280ms cubic-bezier(0.22, 0.61, 0.36, 1)",
+           transformOrigin: "top center",
+         }}>
+      <button onClick={onClose} aria-label="닫기"
+        style={{
+          position: "absolute", top: 14, right: 14, zIndex: 2,
+          background: "rgba(255,255,255,0.92)", border: "1px solid #DDD",
+          color: "#1A1814", width: 36, height: 36, borderRadius: "50%",
+          cursor: "pointer", fontSize: 16, lineHeight: 1,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>✕</button>
+
+      <div style={{
+        width: "100%",
+        height: "min(65vh, 720px)",
+        background: "#F4F4F4",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <img
+          key={idx}
+          src={imgs[idx].url} alt={title}
+          style={{
+            maxWidth: "100%", maxHeight: "100%",
+            objectFit: "contain", display: "block",
+            userSelect: "none", WebkitUserDrag: "none",
+            animation: "lbFadeIn 180ms ease",
+          }} />
+        {total > 1 && (
+          <>
+            <button onClick={prev} aria-label="이전"
+              style={{
+                position: "absolute", top: "50%", left: 12, transform: "translateY(-50%)",
+                background: "rgba(0,0,0,0.45)", border: "none", color: "#FFF",
+                width: 44, height: 60, cursor: "pointer",
+                fontSize: 22, display: "flex", alignItems: "center", justifyContent: "center",
+              }}>‹</button>
+            <button onClick={next} aria-label="다음"
+              style={{
+                position: "absolute", top: "50%", right: 12, transform: "translateY(-50%)",
+                background: "rgba(0,0,0,0.45)", border: "none", color: "#FFF",
+                width: 44, height: 60, cursor: "pointer",
+                fontSize: 22, display: "flex", alignItems: "center", justifyContent: "center",
+              }}>›</button>
+            <div style={{
+              position: "absolute", top: 12, left: 12,
+              background: "rgba(0,0,0,0.45)", color: "#FFF",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 10, padding: "4px 10px", letterSpacing: 1, borderRadius: 2,
+            }}>{idx + 1} / {total}</div>
+          </>
+        )}
+      </div>
+
+      {total > 1 && (
+        <div className="ep-thumb-strip"
+          style={{
+            display: "flex", gap: 8, padding: "12px 20px",
+            overflowX: "auto", overflowY: "hidden",
+            justifyContent: total <= 10 ? "center" : "flex-start",
+          }}>
+          {imgs.map((im, i) => (
+            <button key={i}
+              ref={el => { thumbRefs.current[i] = el; }}
+              onClick={() => setIdx(i)}
+              aria-current={i === idx ? "true" : "false"}
+              style={{
+                flexShrink: 0,
+                width: "clamp(48px, 6vw, 64px)",
+                height: "clamp(48px, 6vw, 64px)",
+                border: i === idx ? "2px solid #1A1814" : "1px solid rgba(0,0,0,0.15)",
+                padding: 0, margin: 0,
+                background: "#FFF", cursor: "pointer",
+                opacity: i === idx ? 1 : 0.6,
+                transition: "opacity 0.18s, border-color 0.18s",
+                overflow: "hidden",
+              }}
+              onMouseEnter={e => { if (i !== idx) e.currentTarget.style.opacity = "0.85"; }}
+              onMouseLeave={e => { if (i !== idx) e.currentTarget.style.opacity = "0.6"; }}
+            >
+              <img src={im.url} alt=""
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }} />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div style={{ padding: "16px 24px 24px", maxWidth: 880 }}>
+        <h3 style={{
+          fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
+          fontWeight: 400, fontSize: "clamp(20px, 1.6vw, 28px)",
+          color: "#1A1814", margin: 0, lineHeight: 1.25,
+        }}>{title}</h3>
+        {subtitle && (
+          <div style={{
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: 13, color: "#1A1814", marginTop: 8, fontWeight: 500,
+          }}>{subtitle}</div>
+        )}
+        {body && (
+          <p style={{
+            margin: "10px 0 0",
+            fontFamily: "'Inter', 'Noto Sans KR', sans-serif",
+            fontSize: 13, color: "#5A5448", lineHeight: 1.7, whiteSpace: "pre-line",
+          }}>{body}</p>
+        )}
+        {year && !body && (
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10, color: "#B0A998", letterSpacing: 1.5,
+            marginTop: 10, textTransform: "uppercase",
+          }}>{year}</div>
+        )}
+        {link && (
+          <a href={link} target="_blank" rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: "inline-block", marginTop: 16,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 10, letterSpacing: 1.8, textTransform: "uppercase",
+              color: "#1A1814", textDecoration: "none",
+              border: "1px solid #1A1814", padding: "9px 18px",
+              transition: "background 0.15s, color 0.15s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#1A1814"; e.currentTarget.style.color = "#FFF"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1814"; }}
+          >View on Instagram →</a>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes expandIn {
+          from { opacity: 0; transform: scaleY(0.92); }
+          to   { opacity: 1; transform: scaleY(1); }
+        }
+        .ep-thumb-strip::-webkit-scrollbar { height: 6px; }
+        .ep-thumb-strip::-webkit-scrollbar-track { background: transparent; }
+        .ep-thumb-strip::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 3px; }
+      `}</style>
+    </div>
+  );
+};
+
+
 // ============================================================================
 // SLIDES
 // ============================================================================
@@ -841,7 +1029,7 @@ const SlidePortfolio = ({ onGo, dense, focused }) => {
 // ----- 04 Projects — 2 cards (Sisley + JungKwang) -----
 const SlideProjects = ({ onGo, dense, focused }) => {
   const curationsDb = React.useContext(CurationCtx);
-  const [lightboxData, setLightboxData] = React.useState(null);
+  const [expandedKey, setExpandedKey] = React.useState(null);
   const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(20px, 1.6vw, 28px)" : "clamp(10px, 0.9vw, 13px)";
   const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.72vw, 11px)";
@@ -897,15 +1085,20 @@ const SlideProjects = ({ onGo, dense, focused }) => {
         {items.map(c => {
           const hasImgs = c.imgs && c.imgs.length > 0;
           const hasMany = c.imgs && c.imgs.length > 1;
+          const isExpanded = c.key === expandedKey;
+
+          if (isExpanded) {
+            return <ExpandedPanel key={c.key} item={c} onClose={() => setExpandedKey(null)} />;
+          }
+
           return (
             <div key={c.key}
                  onClick={(e) => e.stopPropagation()}
                  style={{ display: "flex", flexDirection: "column", color: "inherit" }}>
-              {/* 이미지 — 클릭 시 라이트박스 (이미지 없으면 인스타 링크로 fallback) */}
               <div
                 onClick={() => {
                   if (hasImgs) {
-                    setLightboxData({ images: c.imgs, title: c.title, subtitle: c.subtitle, year: c.year, link: c.link });
+                    setExpandedKey(c.key);
                   } else if (c.link) {
                     window.open(c.link, "_blank", "noopener,noreferrer");
                   }
@@ -953,9 +1146,6 @@ const SlideProjects = ({ onGo, dense, focused }) => {
         })}
       </div>
     </div>
-    {lightboxData && (
-      <LightboxModal data={lightboxData} onClose={() => setLightboxData(null)} />
-    )}
     </>
   );
 };
@@ -963,7 +1153,7 @@ const SlideProjects = ({ onGo, dense, focused }) => {
 // ----- 05 Docent — 9 highlights grid -----
 const SlideDocent = ({ onGo, dense, focused }) => {
   const docentsDb = React.useContext(DocentCtx);
-  const [lightboxData, setLightboxData] = React.useState(null);
+  const [expandedKey, setExpandedKey] = React.useState(null);
   const titleSize = focused ? "clamp(32px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(8px, 0.7vw, 10px)";
   const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
@@ -1021,6 +1211,14 @@ const SlideDocent = ({ onGo, dense, focused }) => {
           {items.map((d, i) => {
             const hasImgs = d.imgs && d.imgs.length > 0;
             const hasMany = d.imgs && d.imgs.length > 1;
+            const isExpanded = d.key === expandedKey;
+
+            if (isExpanded) {
+              // ExpandedPanel은 일반화된 시그니처를 사용 — Docent의 sub를 subtitle로 매핑
+              const expandedItem = { ...d, subtitle: d.sub };
+              return <ExpandedPanel key={d.key} item={expandedItem} onClose={() => setExpandedKey(null)} />;
+            }
+
             return (
               <div key={d.key}
                    onClick={(e) => e.stopPropagation()}
@@ -1028,7 +1226,7 @@ const SlideDocent = ({ onGo, dense, focused }) => {
                 <div
                   onClick={() => {
                     if (hasImgs) {
-                      setLightboxData({ images: d.imgs, title: d.title, subtitle: d.sub, year: d.year, link: d.link });
+                      setExpandedKey(d.key);
                     } else if (d.link) {
                       window.open(d.link, "_blank", "noopener,noreferrer");
                     }
@@ -1063,9 +1261,6 @@ const SlideDocent = ({ onGo, dense, focused }) => {
         </div>
       </div>
     </div>
-    {lightboxData && (
-      <LightboxModal data={lightboxData} onClose={() => setLightboxData(null)} />
-    )}
     </>
   );
 };
@@ -1073,7 +1268,7 @@ const SlideDocent = ({ onGo, dense, focused }) => {
 // ----- 06 Lecture — corporate lectures + signature lectures -----
 const SlideLecture = ({ onGo, dense, focused }) => {
   const sigLectures = React.useContext(SigLectureCtx);
-  const [lightboxData, setLightboxData] = React.useState(null);
+  const [expandedKey, setExpandedKey] = React.useState(null);
   const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(18px, 1.4vw, 24px)" : "clamp(10px, 0.85vw, 13px)";
   const brandSize = focused ? 11 : 7;
@@ -1161,13 +1356,27 @@ const SlideLecture = ({ onGo, dense, focused }) => {
                     ? s.images
                     : (s.image_path ? [{ url: s.image_path, caption: "" }] : []);
                   const hasMany = imgs.length > 1;
+                  const hasImgs = imgs.length > 0;
+                  const isExpanded = s.id === expandedKey;
+
+                  if (isExpanded) {
+                    const expandedItem = {
+                      key: s.id,
+                      title: s.title,
+                      subtitle: s.subtitle,
+                      year: s.year,
+                      link: s.link,
+                      imgs,
+                    };
+                    return <ExpandedPanel key={s.id} item={expandedItem} onClose={() => setExpandedKey(null)} />;
+                  }
+
                   return (
                     <div key={s.id} onClick={(e) => e.stopPropagation()}
                          style={{ display: "flex", flexDirection: "column" }}>
-                      {/* 이미지 — 클릭 시 라이트박스 */}
                       <div
-                        onClick={() => imgs.length > 0 && setLightboxData({ images: imgs, title: s.title, subtitle: s.subtitle, year: s.year, link: s.link })}
-                        style={{ position: "relative", cursor: imgs.length > 0 ? "pointer" : "default" }}
+                        onClick={() => hasImgs && setExpandedKey(s.id)}
+                        style={{ position: "relative", cursor: hasImgs ? "pointer" : "default" }}
                       >
                         <Photo
                           tone={i % 4} ratio="4/3"
@@ -1175,7 +1384,6 @@ const SlideLecture = ({ onGo, dense, focused }) => {
                           alt={s.title}
                           style={{ width: "100%" }}
                         />
-                        {/* 여러 장 표시 배지 */}
                         {hasMany && (
                           <div style={{
                             position: "absolute", top: 8, right: 8,
@@ -1184,8 +1392,7 @@ const SlideLecture = ({ onGo, dense, focused }) => {
                             fontSize: 9, padding: "3px 7px", letterSpacing: 1, borderRadius: 2,
                           }}>1 / {imgs.length}</div>
                         )}
-                        {/* 호버 오버레이 힌트 */}
-                        {imgs.length > 0 && (
+                        {hasImgs && (
                           <div style={{
                             position: "absolute", inset: 0,
                             background: "rgba(0,0,0,0)",
@@ -1204,7 +1411,6 @@ const SlideLecture = ({ onGo, dense, focused }) => {
                         )}
                       </div>
 
-                      {/* 텍스트 */}
                       <div style={{ marginTop: 14 }}>
                         <div style={{
                           fontFamily: "'Cormorant Garamond', 'Noto Serif KR', serif",
@@ -1236,11 +1442,6 @@ const SlideLecture = ({ onGo, dense, focused }) => {
 
       </div>
     </div>
-
-    {/* 라이트박스 — createPortal로 body에 마운트 */}
-    {lightboxData && (
-      <LightboxModal data={lightboxData} onClose={() => setLightboxData(null)} />
-    )}
     </>
   );
 };
