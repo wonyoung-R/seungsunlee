@@ -68,6 +68,8 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 const SigLectureCtx = React.createContext([]);
 const TalkCtx = React.createContext([]);
+const CurationCtx = React.createContext([]);
+const DocentCtx = React.createContext([]);
 
 // ============================================================================
 // DATA — sourced verbatim from https://litt.ly/sdngazer (Curator│Docent)
@@ -789,9 +791,33 @@ const SlidePortfolio = ({ onGo, dense, focused }) => {
 
 // ----- 04 Projects — 2 cards (Sisley + JungKwang) -----
 const SlideProjects = ({ onGo, dense, focused }) => {
+  const curationsDb = React.useContext(CurationCtx);
   const titleSize = focused ? "clamp(40px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(20px, 1.6vw, 28px)" : "clamp(10px, 0.9vw, 13px)";
   const bodySize = focused ? "clamp(13px, 0.95vw, 15px)" : "clamp(8px, 0.72vw, 11px)";
+
+  // DB row → 카드 형태로 매핑. 비어있으면 하드코딩 CURATIONS fallback.
+  const items = curationsDb.length > 0
+    ? curationsDb.map(w => {
+        const img = (Array.isArray(w.images) && w.images.length > 0 && w.images[0].url)
+          ? w.images[0].url
+          : (w.image_path || null);
+        const yearPart = w.year ? `${w.year} · ` : "";
+        const body = w.description
+          ? `${yearPart}${w.description}`
+          : (w.year ? `${w.year}` : "");
+        return {
+          key: w.id,
+          title: w.title,
+          subtitle: w.subtitle || "",
+          body,
+          img,
+          label: w.year ? `CURATION · ${w.year}` : "CURATION",
+          link: w.link || CONTACT.instagram,
+        };
+      })
+    : CURATIONS;
+
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Projects" active="projects" onGo={onGo} dense={dense} />
@@ -810,7 +836,7 @@ const SlideProjects = ({ onGo, dense, focused }) => {
         minHeight: 0,
         overflowY: focused ? "auto" : "hidden",
       }} data-stack-mobile>
-        {CURATIONS.map(c => (
+        {items.map(c => (
           <a key={c.key} href={c.link} target="_blank" rel="noopener noreferrer"
              onClick={(e) => e.stopPropagation()}
              style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
@@ -827,7 +853,9 @@ const SlideProjects = ({ onGo, dense, focused }) => {
                   fontSize: bodySize, color: "#5A5448",
                   marginTop: 8, lineHeight: 1.65, whiteSpace: "pre-line",
                 }}>
-                  <div style={{ fontWeight: 500, color: "#1A1814", marginBottom: 4 }}>{c.subtitle}</div>
+                  {c.subtitle && (
+                    <div style={{ fontWeight: 500, color: "#1A1814", marginBottom: 4 }}>{c.subtitle}</div>
+                  )}
                   {c.body}
                 </div>
               )}
@@ -848,9 +876,27 @@ const SlideProjects = ({ onGo, dense, focused }) => {
 
 // ----- 05 Docent — 9 highlights grid -----
 const SlideDocent = ({ onGo, dense, focused }) => {
+  const docentsDb = React.useContext(DocentCtx);
   const titleSize = focused ? "clamp(32px, 4vw, 64px)" : "clamp(14px, 1.4vw, 22px)";
   const cardTitleSize = focused ? "clamp(13px, 1vw, 16px)" : "clamp(8px, 0.7vw, 10px)";
   const subSize = focused ? "clamp(11px, 0.78vw, 13px)" : "clamp(7px, 0.6vw, 9px)";
+
+  // DB row → 카드 형태 매핑. 비어있으면 하드코딩 DOCENT_HIGHLIGHTS fallback.
+  const items = docentsDb.length > 0
+    ? docentsDb.map(w => {
+        const img = (Array.isArray(w.images) && w.images.length > 0 && w.images[0].url)
+          ? w.images[0].url
+          : (w.image_path || null);
+        return {
+          key: w.id,
+          title: w.title,
+          sub: w.subtitle || w.description || "",
+          img,
+          link: w.link || CONTACT.instagram,
+        };
+      })
+    : DOCENT_HIGHLIGHTS.map((d, i) => ({ ...d, key: i }));
+
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#FFFFFF" }}>
       <MiniNav label="Docent" active="docent" onGo={onGo} dense={dense} />
@@ -864,7 +910,7 @@ const SlideDocent = ({ onGo, dense, focused }) => {
           <div style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10, color: "#9A9486", letterSpacing: 1.5, textTransform: "uppercase",
-          }}>Career Highlights · {DOCENT_HIGHLIGHTS.length}</div>
+          }}>Career Highlights · {items.length}</div>
         )}
       </div>
       <div style={{
@@ -876,8 +922,8 @@ const SlideDocent = ({ onGo, dense, focused }) => {
           gridTemplateColumns: "repeat(3, 1fr)",
           gap: focused ? 24 : 8,
         }} data-grid-3>
-          {DOCENT_HIGHLIGHTS.map((d, i) => (
-            <a key={i} href={d.link} target="_blank" rel="noopener noreferrer"
+          {items.map((d, i) => (
+            <a key={d.key} href={d.link} target="_blank" rel="noopener noreferrer"
                onClick={(e) => e.stopPropagation()}
                style={{ display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}>
               <Photo tone={i % 4} ratio="1/1" src={d.img} alt={d.title} style={{ width: "100%" }} />
@@ -1365,6 +1411,8 @@ const App = () => {
   const [landed, setLanded] = React.useState(false);
   const [sigLectures, setSigLectures] = React.useState([]);
   const [talks, setTalks] = React.useState([]);
+  const [curations, setCurations] = React.useState([]);
+  const [docents, setDocents] = React.useState([]);
 
   React.useEffect(() => {
     const sb = window.supabase.createClient(SB_URL, SB_KEY);
@@ -1376,6 +1424,8 @@ const App = () => {
     const fetchAll = () => {
       fetchCat('signature_lecture', setSigLectures);
       fetchCat('talk', setTalks);
+      fetchCat('curation', setCurations);
+      fetchCat('docent', setDocents);
     };
 
     fetchAll();
@@ -1462,6 +1512,8 @@ const App = () => {
     return (
       <SigLectureCtx.Provider value={sigLectures}>
       <TalkCtx.Provider value={talks}>
+      <CurationCtx.Provider value={curations}>
+      <DocentCtx.Provider value={docents}>
       <div style={{
         height: "100vh", width: "100vw", overflow: "hidden",
         background: "#F5F5F5", padding: "clamp(16px, 2.5vw, 36px)",
@@ -1487,6 +1539,8 @@ const App = () => {
           }
         `}</style>
       </div>
+      </DocentCtx.Provider>
+      </CurationCtx.Provider>
       </TalkCtx.Provider>
       </SigLectureCtx.Provider>
     );
@@ -1495,10 +1549,14 @@ const App = () => {
   return (
     <SigLectureCtx.Provider value={sigLectures}>
     <TalkCtx.Provider value={talks}>
+    <CurationCtx.Provider value={curations}>
+    <DocentCtx.Provider value={docents}>
       <div style={{ minHeight: "100vh", background: "#F5F5F5", padding: "clamp(16px, 2.5vw, 36px)" }}>
         <Grid cardRefs={cardRefs} onOpen={openSlide} onNav={handleNav} focusedKey={focused} />
         <FocusOverlay focused={focused} transition={transition} onClose={closeSlide} onNav={handleNav} />
       </div>
+    </DocentCtx.Provider>
+    </CurationCtx.Provider>
     </TalkCtx.Provider>
     </SigLectureCtx.Provider>
   );
