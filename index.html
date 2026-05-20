@@ -801,6 +801,7 @@ const SlideHome = ({ onGo, dense, focused }) => {
 
 // ----- 02 About -----
 const SlideAbout = ({ onGo, dense, focused }) => {
+  const mob = useIsMobile();
   const titleSize = focused ? "clamp(32px, 3vw, 52px)" : "clamp(14px, 1.5vw, 26px)";
   const bodySize = focused ? "clamp(14px, 0.95vw, 16px)" : "clamp(9px, 0.78vw, 12px)";
   const labelSize = focused ? 11 : 7;
@@ -887,6 +888,7 @@ const SlideAbout = ({ onGo, dense, focused }) => {
           {focused && (
             <p style={{
               margin: 0,
+              marginTop: mob ? "2.6em" : 0,  // 모바일에서만 윗 문단과 두 줄 더 띄움
               fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic",
               fontSize: titleSize, lineHeight: 1.1, color: "#5A5448", letterSpacing: -0.3,
             }}>
