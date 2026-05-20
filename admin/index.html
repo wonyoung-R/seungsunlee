@@ -616,7 +616,8 @@ function renderTable() {
          <div style="font-size:10px;color:#CC3333;letter-spacing:1px;text-transform:uppercase;margin-top:3px">삭제됨 · ${fmtDate(w.deleted_at)}</div>`
       : `<strong>${escHtml(w.title)}</strong>`;
     const actions = isDeleted
-      ? `<button class="btn ghost small" onclick="restoreWork('${w.id}')">복원</button>`
+      ? `<button class="btn ghost small" onclick="restoreWork('${w.id}')">복원</button>
+         <button class="btn danger small" onclick="purgeWork('${w.id}')">영구 삭제</button>`
       : `<button class="btn ghost small" onclick="startEdit('${w.id}')">수정</button>
          <button class="btn danger small" onclick="deleteWork('${w.id}')">삭제</button>`;
     return `
@@ -880,6 +881,49 @@ async function restoreWork(id) {
   if (!confirm(`"${w?.title}" 을 복원하시겠어요?`)) return;
   const { error } = await db.from('works').update({ deleted_at: null }).eq('id', id);
   if (error) { alert('복원 실패: ' + error.message); return; }
+  loadWorks();
+}
+
+// works 레코드의 모든 이미지 URL → 버킷 내 상대 경로(talk/xxx.jpg) 추출
+function collectStoragePaths(w) {
+  const urls = [];
+  if (Array.isArray(w.images)) {
+    for (const im of w.images) { if (im && im.url) urls.push(im.url); }
+  }
+  if (w.image_path) urls.push(w.image_path);
+  // 버킷 prefix 이후 경로만 (중복 제거)
+  const paths = urls
+    .map(u => {
+      const marker = `/${BUCKET}/`;
+      const idx = u.indexOf(marker);
+      return idx >= 0 ? u.slice(idx + marker.length) : null;
+    })
+    .filter(Boolean);
+  return [...new Set(paths)];
+}
+
+// 영구 삭제 — Storage 파일 + works row 동시 제거 (복원 불가)
+async function purgeWork(id) {
+  const w = allWorks.find(x => x.id === id);
+  const paths = collectStoragePaths(w);
+  if (!confirm(
+    `"${w?.title}" 을(를) 영구 삭제합니다.\n\n` +
+    `• Storage 이미지 ${paths.length}개 파일 삭제\n` +
+    `• DB 레코드 삭제\n\n⚠️ 복원할 수 없습니다. 계속할까요?`
+  )) return;
+
+  // 1) Storage 파일 삭제 (있을 때만)
+  if (paths.length > 0) {
+    const { error: sErr } = await db.storage.from(BUCKET).remove(paths);
+    if (sErr) {
+      if (!confirm(`Storage 파일 삭제 실패: ${sErr.message}\n\nDB 레코드만 삭제하고 계속할까요?`)) return;
+    }
+  }
+
+  // 2) DB 레코드 삭제
+  const { error: dErr } = await db.from('works').delete().eq('id', id);
+  if (dErr) { alert('레코드 삭제 실패: ' + dErr.message); return; }
+
   loadWorks();
 }
 
