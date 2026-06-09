@@ -1,0 +1,7 @@
+# https://sdngazer.art/
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin.html
+
+Sitemap: https://sdngazer.art/sitemap.xml
