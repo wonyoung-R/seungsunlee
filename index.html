@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>이승선 — Seungsun Lee · Curator │ Docent</title>
-<meta name="description" content="Where Art Connects to Me — A new philosophy on art & storytelling by Seungsun Lee. Curator, Docent, and Art Storyteller bridging museum and brand." />
+<meta name="description" content="도슨트·큐레이터 이승선(Seungsun Lee) — Where Art Connects to Me. 국립중앙박물관 도슨트, SFMOMA·MoMA 아트 투어, 소더비·불가리 VIP 도슨트, 전시 큐레이션과 기업 아트 강연." />
 <meta name="google-site-verification" content="_YNkHwl3o1PAY4embjBKcUoeaVmoUTeTvWnlZb4b9Ko" />
 <link rel="canonical" href="https://sdngazer.art/" />
 <meta property="og:type" content="website" />
@@ -33,7 +33,8 @@
   "url": "https://sdngazer.art/",
   "image": "https://sdngazer.art/assets/img/og-image.jpg",
   "sameAs": [
-    "https://www.instagram.com/sdngazer/"
+    "https://www.instagram.com/sdngazer/",
+    "https://www.youtube.com/@leeseungsun"
   ],
   "knowsLanguage": ["ko", "en"],
   "nationality": "KR"
@@ -86,6 +87,38 @@
 </head>
 <body>
 <div id="root"></div>
+
+<!-- 검색엔진용 정적 소개 섹션 — React 앱(#root) 바깥에 두어 렌더링 후에도 유지됨 -->
+<section id="about-seo" lang="ko" style="background:#F5F5F5; padding: 48px clamp(16px, 2.5vw, 36px) 64px;">
+  <div style="max-width:1480px; margin:0 auto; background:#FFFFFF; padding:clamp(28px,4vw,56px); box-shadow:0 1px 0 rgba(0,0,0,0.04);">
+    <p style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2.2px; color:#9A9486; text-transform:uppercase; margin:0 0 14px;">About</p>
+    <h2 style="font-family:'Cormorant Garamond','Noto Serif KR',serif; font-weight:400; font-size:clamp(24px,2.4vw,36px); color:#1A1814; margin:0 0 16px; line-height:1.2;">도슨트 · 큐레이터 이승선 <span style="color:#9A9486;">Seungsun Lee</span></h2>
+    <p style="font-family:'Inter','Noto Sans KR',sans-serif; font-size:14px; line-height:1.85; color:#3A3530; margin:0 0 24px; max-width:760px;">
+      예술과 사람을 연결하는 도슨트이자 큐레이터입니다. "Where Art Connects to Me"라는 철학 아래
+      미술관과 브랜드를 오가며 전시 기획(큐레이션), 도슨트 투어, 아트 스토리텔링 강연을 진행합니다.
+      서울을 기반으로 한국어와 영어로 활동하며, 근현대 미술(Modern · Contemporary)을 중심으로
+      관람객이 작품을 만나고 이해하고 자신만의 해석을 만들어가는 경험을 설계합니다.
+    </p>
+    <h3 style="font-family:'Inter','Noto Sans KR',sans-serif; font-size:12px; letter-spacing:1.5px; color:#9A9486; text-transform:uppercase; font-weight:500; margin:0 0 12px;">주요 경력</h3>
+    <ul style="font-family:'Inter','Noto Sans KR',sans-serif; font-size:13px; line-height:2; color:#5A5448; margin:0 0 28px; padding-left:18px; max-width:760px;">
+      <li>국립중앙박물관 도슨트</li>
+      <li>SFMOMA(샌프란시스코 현대미술관) 아트 투어 디렉터 &amp; 도슨트</li>
+      <li>뉴욕 MoMA(현대미술관) 도슨트 — 안민정 작가</li>
+      <li>소더비(Sotheby's) 헨리 무어 도슨트 · 살롱 한남 2024 VIP 도슨트</li>
+      <li>불가리(BVLGARI) 2025 VIP 도슨트</li>
+      <li>살바도르 달리 에칭전(아르지예 컬렉션) · 파블로 피카소 에디션 세라믹 25년전 도슨트</li>
+      <li>시슬리 파리(Sisley Paris) 큐레이션 — 2025 시슬리 영 아티스트 어워드, 서울</li>
+      <li>정광(Jung Gwang) 20주기 기념전 큐레이션</li>
+      <li>기업 아트 강연 — LG · 하나은행 VIP · 롯데</li>
+      <li>대학 특강 · 커리어 토크</li>
+    </ul>
+    <p style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1.5px; color:#9A9486; margin:0; display:flex; gap:20px; flex-wrap:wrap;">
+      <a href="https://www.youtube.com/@leeseungsun" target="_blank" rel="noopener noreferrer" style="color:#5A5448; text-decoration:none;">YOUTUBE @leeseungsun</a>
+      <a href="https://www.instagram.com/sdngazer/" target="_blank" rel="noopener noreferrer" style="color:#5A5448; text-decoration:none;">INSTAGRAM @sdngazer</a>
+      <a href="mailto:sdngazer@gmail.com" style="color:#5A5448; text-decoration:none;">EMAIL sdngazer@gmail.com</a>
+    </p>
+  </div>
+</section>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
